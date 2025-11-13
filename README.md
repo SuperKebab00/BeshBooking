@@ -91,17 +91,6 @@ Nessun dato inviato a server esterni
 
 ⚠️ Nota: Non progettato per produzione reale; richiede backend per sicurezza completa.
 
-🌐 Deploy su GitHub Pages
-
-Carica il progetto su un repository GitHub
-
-Vai su Settings → Pages
-
-Seleziona main branch / root
-
-Il sito sarà online a un URL tipo:
-https://tuonome.github.io/barbershop-booking
-
 🤝 Contributi
 
 Pull request e suggerimenti sono benvenuti!

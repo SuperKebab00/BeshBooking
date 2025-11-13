@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prenotazione Cliente</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/client.css" />
+</head>
+
+<body class="client-booking-page">
+
+    <header class="client-header">
+        <a href="../index.html" class="logo-link">
+    <img src="../assets/img/logo.png" alt="BarberBook Logo" class="site-logo" />
+  </a>
+        <button id="logoutClientBtn" class="logout-btn">Logout</button>
+    </header>
+
+    <main class="client-content">
+        <h1>Prenota il tuo appuntamento</h1>
+
+        <div class="booking-controls">
+            <label for="datePicker">Seleziona una data:</label>
+            <input type="date" id="datePicker" />
+        </div>
+
+        <div class="available-slots">
+            <h2>Fasce orarie disponibili</h2>
+            <ul id="slotList" class="slot-list"></ul>
+        </div>
+
+        <div class="booking-form" id="bookingForm" style="display:none;">
+            <h2>Completa la prenotazione</h2>
+            <input type="text" id="clientName" placeholder="Il tuo nome" class="login-input" />
+            <button id="confirmBookingBtn" class="login-btn">Conferma Prenotazione</button>
+        </div>
+    </main>
+
+    <footer class="client-footer">
+        <p>© 2025 BarberBook</p>
+    </footer>
+
+    <script src="../scripts/storage.js"></script>
+    <script src="../scripts/ui.js"></script>
+    <script src="client.js"></script>
+</body>
+</html>

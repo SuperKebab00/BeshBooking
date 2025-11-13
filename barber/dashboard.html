@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Barbiere</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/barber.css">
+</head>
+
+<body class="barber-dashboard">
+    <header class="barber-header">
+        <a href="../index.html" class="logo-link">
+    <img src="../assets/img/logo.png" alt="BarberBook Logo" class="site-logo" />
+  </a>
+        <button id="logoutBtn" class="logout-btn">Logout</button>
+    </header>
+
+    <nav class="barber-tabs">
+        <button class="tab-btn active" data-tab="availability">Disponibilità</button>
+        <button class="tab-btn" data-tab="bookings">Prenotazioni</button>
+        <button class="tab-btn" data-tab="settings">Impostazioni</button>
+    </nav>
+
+    <main class="barber-content">
+        <!-- =======================
+             Tab 1: Disponibilità
+        ======================== -->
+        <section id="tab-availability" class="tab-section active">
+            <h2>Gestisci Disponibilità</h2>
+            <div class="availability-controls">
+                <input type="date" id="availDate">
+                <input type="time" id="availTime">
+                <button id="addSlotBtn" class="btn-primary">Aggiungi Fascia</button>
+            </div>
+
+            <ul id="availList" class="simple-list"></ul>
+        </section>
+
+        <!-- =======================
+             Tab 2: Prenotazioni
+        ======================== -->
+        <section id="tab-bookings" class="tab-section">
+            <h2>Prenotazioni Clienti</h2>
+            <input type="date" id="bookingDate">
+            <ul id="bookingList" class="simple-list"></ul>
+        </section>
+
+        <!-- =======================
+             Tab 3: Impostazioni
+        ======================== -->
+        <section id="tab-settings" class="tab-section">
+            <h2>Impostazioni</h2>
+            <div class="settings-card">
+                <h3>Cambia Password</h3>
+                <input type="password" id="newPassword" placeholder="Nuova password">
+                <button id="changePwdBtn" class="btn-primary">Aggiorna</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="../scripts/storage.js"></script>
+    <script src="../scripts/ui.js"></script>
+    <script src="barber.js"></script>
+</body>
+</html>

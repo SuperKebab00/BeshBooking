@@ -2,9 +2,8 @@
    client.js - Supabase Email OTP + Bookings DB
    ========================================== */
 
-const SUPABASE_URL = "https://osezloxbxmifcdrcxzfw.supabase.co";
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zZXpsb3hieG1pZmNkcmN4emZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5MDk3MjcsImV4cCI6MjA3OTQ4NTcyN30.ylLZaZV3ubc-TWNqIjJzH3-w4oNsmIRmK-4QCJhqyqQ";
+   const SUPABASE_URL = "https://qkdgjmwdxtosqxmnfmsb.supabase.co";
+const SUPABASE_ANON_KEY ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrZGdqbXdkeHRvc3F4bW5mbXNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5ODU2NTQsImV4cCI6MjA3OTU2MTY1NH0.t7rAZuU3tGeKE7AYLkpFZysl5antY7XTBdPOR1DELYU";
 
 const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

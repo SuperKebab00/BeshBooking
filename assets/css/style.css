@@ -3,13 +3,18 @@
    =========================== */
 
 :root {
-    --color-bg: #0c0c0c;
-    --color-bg-light: #1a1a1a;
-    --color-primary: #d4af37; /* Oro elegante */
-    --color-white: #ffffff;
-    --color-text: #ececec;
-    --color-accent: #b8860b; /* Oro più scuro per hover */
-    
+    --color-bg: #050505;
+    --color-bg-light: #111111;
+    --color-surface: #181818;
+    --color-border: #2b2b2b;
+    --color-primary: #f5f5f5; /* usato come testo/pulsanti principali */
+    --color-text: #e0e0e0;
+    --color-muted: #a8a8a8;
+    --color-accent: #bfbfbf; /* hover / micro accenti */
+
+    --radius-md: 10px;
+    --radius-lg: 18px;
+    --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.55);
     --font-title: 'Cormorant Garamond', serif;
     --font-body: 'Montserrat', sans-serif;
 }
@@ -20,6 +25,10 @@
     box-sizing: border-box;
 }
 
+/* ===========================
+   Body
+   =========================== */
+
 body {
     font-family: var(--font-body);
     background-color: var(--color-bg);
@@ -27,6 +36,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    -webkit-font-smoothing: antialiased;
 }
 
 /* ===========================
@@ -34,7 +44,7 @@ body {
    =========================== */
 
 .main-header {
-    padding: 30px 0;
+    padding: 32px 0 10px;
     background: transparent;
     display: flex;
     justify-content: center;
@@ -42,22 +52,24 @@ body {
 }
 
 .logo-link {
-    display: inline-block;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
     text-decoration: none;
 }
 
 .site-logo {
-    width: 100px;
+    width: 96px;
     height: auto;
-    transition: transform 0.3s ease, opacity 0.3s ease;
-    filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.3));
+    transition: transform 0.25s ease, opacity 0.25s ease, filter 0.25s ease;
+    filter: drop-shadow(0 0 14px rgba(255, 255, 255, 0.08));
 }
 
-.site-logo:hover {
-    transform: scale(1.05);
-    opacity: 0.9;
-}
-
+    .site-logo:hover {
+        transform: translateY(-1px) scale(1.03);
+        opacity: 0.92;
+        filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.14));
+    }
 
 /* ===========================
    Homepage Layout
@@ -65,59 +77,115 @@ body {
 
 .home-container {
     text-align: center;
-    margin-top: 60px;
-    padding: 20px;
+    margin-top: 40px;
+    padding: 0 20px 40px;
 }
 
 .welcome-title {
     font-family: var(--font-title);
     font-size: 3rem;
-    color: var(--color-white);
-    margin-bottom: 10px;
+    letter-spacing: 0.03em;
+    color: #ffffff;
+    margin-bottom: 8px;
 }
 
 .subtitle {
-    font-size: 1rem;
+    font-size: 0.95rem;
     margin-bottom: 40px;
-    color: rgba(255, 255, 255, 0.7);
+    color: var(--color-muted);
 }
 
 .role-selection {
     display: flex;
     justify-content: center;
-    gap: 40px;
+    gap: 32px;
     flex-wrap: wrap;
-    margin-top: 30px;
+    margin-top: 24px;
 }
 
 .role-card {
-    width: 250px;
-    padding: 30px;
-    border: 1px solid var(--color-primary);
-    background-color: var(--color-bg-light);
-    border-radius: 10px;
+    width: 260px;
+    padding: 26px 24px;
+    border-radius: var(--radius-lg);
     text-decoration: none;
-    color: var(--color-white);
-    transition: all 0.3s ease;
+    color: var(--color-text);
+    background: radial-gradient(circle at top left, #1f1f1f, #111111);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
     cursor: pointer;
 }
 
-.role-card h2 {
-    font-family: var(--font-title);
-    font-size: 1.8rem;
-    margin-bottom: 10px;
+    .role-card h2 {
+        font-family: var(--font-title);
+        font-size: 1.7rem;
+        margin-bottom: 6px;
+        color: #ffffff;
+    }
+
+    .role-card p {
+        font-size: 0.9rem;
+        color: var(--color-muted);
+    }
+
+    .role-card:hover {
+        transform: translateY(-6px);
+        border-color: #444;
+        background: radial-gradient(circle at top left, #232323, #121212);
+        box-shadow: 0 26px 60px rgba(0, 0, 0, 0.85);
+    }
+
+/* ===========================
+   Global Buttons (include logout)
+   =========================== */
+
+button {
+    font-family: var(--font-body);
 }
 
-.role-card p {
-    font-size: 0.95rem;
-    opacity: 0.9;
+.btn-primary,
+.logout-btn {
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 999px;
+    border: none;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.7);
 }
 
-.role-card:hover {
-    transform: translateY(-6px);
-    background-color: var(--color-accent);
-    border-color: var(--color-accent);
+    .btn-primary:hover,
+    .logout-btn:hover {
+        transform: translateY(-2px);
+        background-color: #f0f0f0;
+        box-shadow: 0 18px 42px rgba(0, 0, 0, 0.85);
+    }
+
+.btn-secondary {
+    background: transparent;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    padding: 9px 18px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
+
+    .btn-secondary:hover {
+        background-color: #ffffff;
+        color: #000;
+        border-color: #ffffff;
+        transform: translateY(-1px);
+    }
 
 /* ===========================
    Footer
@@ -125,12 +193,80 @@ body {
 
 .main-footer {
     margin-top: auto;
-    padding: 15px 0;
+    padding: 16px 0;
     text-align: center;
-    font-size: 0.85rem;
-    background-color: var(--color-bg-light);
-    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+    background: linear-gradient(to top, #050505, #080808);
+    color: var(--color-muted);
+    border-top: 1px solid var(--color-border);
 }
+
+/* ===========================
+   Generic Card (riusabile)
+   =========================== */
+
+.app-card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    padding: 24px 22px;
+    box-shadow: var(--shadow-soft);
+}
+
+/* ===========================
+   Modal / Popup interno
+   =========================== */
+
+.app-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: none; /* mostrata via JS */
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    backdrop-filter: blur(10px);
+}
+
+    .app-modal-overlay.is-visible {
+        display: flex;
+    }
+
+.app-modal {
+    width: min(420px, 90%);
+    background: #101010;
+    border-radius: 18px;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.95);
+    padding: 22px 22px 18px;
+}
+
+.app-modal-title {
+    font-family: var(--font-title);
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.app-modal-message {
+    font-size: 0.95rem;
+    color: var(--color-muted);
+    margin-bottom: 18px;
+}
+
+.app-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+    .app-modal-actions .btn-primary {
+        padding-inline: 18px;
+    }
+
+    .app-modal-actions .btn-secondary {
+        padding-inline: 16px;
+    }
 
 /* ===========================
    Responsive
@@ -146,33 +282,7 @@ body {
     }
 
     .role-card {
-        width: 200px;
-        padding: 22px;
+        width: 100%;
+        max-width: 320px;
     }
 }
-/* ===========================
-   Global Background Barber Style
-   =========================== */
-
-body {
-    background: url("../img/barber-bg.jpg") no-repeat center center fixed;
-    background-size: cover;
-    color: var(--color-text);
-    font-family: var(--font-body);
-    min-height: 100vh;
-    position: relative;
-}
-
-body::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(12, 12, 12, 0.75); /* overlay nero semitrasparente */
-    z-index: -1;
-}
-
-
-

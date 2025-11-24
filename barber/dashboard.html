@@ -16,8 +16,8 @@
 <body class="barber-dashboard">
     <header class="barber-header">
         <a href="../index.html" class="logo-link">
-    <img src="../assets/img/logo.png" alt="BarberBook Logo" class="site-logo" />
-  </a>
+            <img src="../assets/img/logo.png" alt="BarberBook Logo" class="site-logo" />
+        </a>
         <button id="logoutBtn" class="logout-btn">Logout</button>
     </header>
 
@@ -63,6 +63,17 @@
             </div>
         </section>
     </main>
+    <!-- Modal globale -->
+    <div class="app-modal-overlay" id="appModal">
+        <div class="app-modal">
+            <h2 class="app-modal-title" id="appModalTitle">Avviso</h2>
+            <p class="app-modal-message" id="appModalMessage"></p>
+            <div class="app-modal-actions">
+                <button type="button" class="btn-secondary" id="appModalCancel">Annulla</button>
+                <button type="button" class="btn-primary" id="appModalOk">OK</button>
+            </div>
+        </div>
+    </div>
 
     <script src="../scripts/storage.js"></script>
     <script src="../scripts/ui.js"></script>

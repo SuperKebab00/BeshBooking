@@ -1,6 +1,5 @@
 /* ==========================================
-   client.js
-   Login cliente + Prenotazioni
+   client.js - versione aggiornata minimal
    ========================================== */
 
 /* ---------- Sessione ---------- */
@@ -25,7 +24,7 @@ function generateOtp() {
 }
 
 /* =========================================================
-   SEZIONE LOGIN CLIENTE (login.html)
+   LOGIN CLIENTE
    ========================================================= */
 (function initLogin() {
     const phoneInput = document.getElementById("phoneInput");
@@ -38,35 +37,44 @@ function generateOtp() {
     const stepPhone = document.getElementById("step-phone");
     const stepOtp = document.getElementById("step-otp");
 
-    if (!sendOtpBtn || !verifyOtpBtn) return; // Non siamo nella pagina di login
+    if (!sendOtpBtn || !verifyOtpBtn) return;
 
-    // Step 1: invia OTP
+    /* Step 1 */
     sendOtpBtn.addEventListener("click", () => {
-        const phone = (phoneInput.value || "").trim();
+        const phone = phoneInput.value.trim();
         if (!phone) {
-            alert("Inserisci un numero di telefono valido.");
+            showMessage("Inserisci un numero valido", "error");
             return;
         }
+
         generatedOtp = generateOtp();
         tempPhone = phone;
+
         otpDisplay.textContent = generatedOtp;
+
         stepPhone.classList.remove("active");
         stepOtp.classList.add("active");
     });
 
-    // Step 2: verifica OTP
+    /* Step 2 */
     verifyOtpBtn.addEventListener("click", () => {
-        const entered = (otpInput.value || "").trim();
+        const entered = otpInput.value.trim();
+
         if (entered === generatedOtp) {
             setClientLogged(tempPhone);
-            alert("Accesso effettuato con successo!");
-            window.location.href = "booking.html";
+
+            openModal({
+                title: "Accesso effettuato",
+                message: "Benvenuto!",
+            }).then(() => {
+                window.location.href = "booking.html";
+            });
+
         } else {
-            alert("Codice errato. Riprova.");
+            showMessage("Codice errato.", "error");
         }
     });
 
-    // Torna indietro
     if (backBtn) {
         backBtn.addEventListener("click", () => {
             stepOtp.classList.remove("active");
@@ -76,7 +84,7 @@ function generateOtp() {
 })();
 
 /* =========================================================
-   SEZIONE PRENOTAZIONI (booking.html)
+   PRENOTAZIONI CLIENTE
    ========================================================= */
 (function initBookingPage() {
     const datePicker = document.getElementById("datePicker");
@@ -86,7 +94,7 @@ function generateOtp() {
     const confirmBookingBtn = document.getElementById("confirmBookingBtn");
     const logoutBtn = document.getElementById("logoutClientBtn");
 
-    if (!datePicker || !slotList) return; // Non siamo nella pagina di prenotazione
+    if (!datePicker || !slotList) return;
 
     const phone = getClientPhone();
     if (!phone) {
@@ -96,41 +104,46 @@ function generateOtp() {
 
     if (logoutBtn) {
         logoutBtn.addEventListener("click", () => {
-            clearClientSession();
-            window.location.href = "login.html";
+            openModal({
+                title: "Logout",
+                message: "Vuoi uscire?",
+                showCancel: true
+            }).then(ok => {
+                if (ok) {
+                    clearClientSession();
+                    window.location.href = "login.html";
+                }
+            });
         });
     }
 
-    /* ---------- Gestione disponibilità ---------- */
+    /* Helpers */
     function loadAvailabilityFor(dateKey) {
-        const availability = getAvailability();
-        return availability[dateKey] || [];
+        return getAvailability()[dateKey] || [];
     }
     function saveAvailabilityFor(dateKey, slots) {
-        const availability = getAvailability();
-        availability[dateKey] = slots;
-        saveAvailability(availability);
+        const a = getAvailability();
+        a[dateKey] = slots;
+        saveAvailability(a);
     }
 
-    /* ---------- Gestione prenotazioni ---------- */
     function loadBookingsFor(dateKey) {
-        const bookings = getBookings();
-        return bookings[dateKey] || [];
+        return getBookings()[dateKey] || [];
     }
     function saveBookingsFor(dateKey, list) {
-        const bookings = getBookings();
-        bookings[dateKey] = list;
-        saveBookings(bookings);
+        const b = getBookings();
+        b[dateKey] = list;
+        saveBookings(b);
     }
 
-    /* ---------- Rendering slot disponibili ---------- */
+    /* Rendering slot */
     function renderSlots(dateKey) {
         const slots = loadAvailabilityFor(dateKey).slice().sort();
         slotList.innerHTML = "";
 
         if (slots.length === 0) {
             const li = document.createElement("li");
-            li.textContent = "Nessuna fascia disponibile per questa data.";
+            li.textContent = "Nessuna fascia disponibile.";
             slotList.appendChild(li);
             return;
         }
@@ -138,15 +151,17 @@ function generateOtp() {
         slots.forEach((time) => {
             const li = document.createElement("li");
             li.innerHTML = `Ore <span>${time}</span>`;
+
             const btn = document.createElement("button");
             btn.textContent = "Prenota";
             btn.addEventListener("click", () => selectSlot(time, dateKey));
+
             li.appendChild(btn);
             slotList.appendChild(li);
         });
     }
 
-    /* ---------- Selezione slot ---------- */
+    /* Prenotazione */
     let selectedSlot = null;
     let selectedDate = null;
 
@@ -154,49 +169,55 @@ function generateOtp() {
         selectedSlot = time;
         selectedDate = dateKey;
         bookingForm.style.display = "block";
-        window.scrollTo({ top: bookingForm.offsetTop, behavior: "smooth" });
+
+        window.scrollTo({
+            top: bookingForm.offsetTop,
+            behavior: "smooth"
+        });
     }
 
-    /* ---------- Conferma prenotazione ---------- */
+    /* Conferma */
     if (confirmBookingBtn) {
         confirmBookingBtn.addEventListener("click", () => {
-            const name = (clientNameInput.value || "").trim();
-            if (!name) {
-                alert("Inserisci il tuo nome.");
-                return;
-            }
-            if (!selectedDate || !selectedSlot) {
-                alert("Seleziona una fascia oraria prima di confermare.");
-                return;
-            }
+            const name = clientNameInput.value.trim();
 
-            // Aggiorna prenotazioni
-            const currentBookings = loadBookingsFor(selectedDate);
-            currentBookings.push({
+            if (!name)
+                return showMessage("Inserisci il tuo nome.", "error");
+
+            if (!selectedSlot)
+                return showMessage("Seleziona una fascia prima.", "error");
+
+            /* Aggiorna prenotazioni */
+            const bk = loadBookingsFor(selectedDate);
+            bk.push({
                 time: selectedSlot,
-                name: name,
-                phone: phone
+                name,
+                phone
             });
-            saveBookingsFor(selectedDate, currentBookings);
+            saveBookingsFor(selectedDate, bk);
 
-            // Rimuove la fascia oraria dalle disponibilità
-            const currentAvail = loadAvailabilityFor(selectedDate).filter(
-                (t) => t !== selectedSlot
-            );
-            saveAvailabilityFor(selectedDate, currentAvail);
+            /* Rimuovi fascia */
+            const avail = loadAvailabilityFor(selectedDate)
+                .filter(t => t !== selectedSlot);
+            saveAvailabilityFor(selectedDate, avail);
 
-            alert("Prenotazione confermata!");
+            openModal({
+                title: "Prenotazione confermata",
+                message: `Hai prenotato alle ${selectedSlot}.`
+            });
+
             clientNameInput.value = "";
             bookingForm.style.display = "none";
             renderSlots(selectedDate);
         });
     }
 
-    /* ---------- Data iniziale ---------- */
+    /* Inizializzazione data */
     const today = new Date();
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, "0");
     const dd = String(today.getDate()).padStart(2, "0");
+
     const todayKey = `${yyyy}-${mm}-${dd}`;
     datePicker.value = todayKey;
 

@@ -17,8 +17,8 @@
 
     <header class="client-header">
         <a href="../index.html" class="logo-link">
-    <img src="../assets/img/logo.png" alt="BarberBook Logo" class="site-logo" />
-  </a>
+            <img src="../assets/img/logo.png" alt="BarberBook Logo" class="site-logo" />
+        </a>
         <button id="logoutClientBtn" class="logout-btn">Logout</button>
     </header>
 
@@ -45,7 +45,17 @@
     <footer class="client-footer">
         <p>© 2025 BarberBook</p>
     </footer>
-
+    <!-- Modal globale -->
+    <div class="app-modal-overlay" id="appModal">
+        <div class="app-modal">
+            <h2 class="app-modal-title" id="appModalTitle">Avviso</h2>
+            <p class="app-modal-message" id="appModalMessage"></p>
+            <div class="app-modal-actions">
+                <button type="button" class="btn-secondary" id="appModalCancel">Annulla</button>
+                <button type="button" class="btn-primary" id="appModalOk">OK</button>
+            </div>
+        </div>
+    </div>
     <script src="../scripts/storage.js"></script>
     <script src="../scripts/ui.js"></script>
     <script src="client.js"></script>

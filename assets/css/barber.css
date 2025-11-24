@@ -1,11 +1,11 @@
 /* ==========================================
-   barber.css
-   Stile per l'area Barbiere
+   barber.css – Area Barbiere
+   Minimal B/W
    ========================================== */
 
 body.barber-dashboard {
-    background-color: #0c0c0c;
-    color: #fff;
+    background-color: #050505;
+    color: #f5f5f5;
     font-family: var(--font-body);
     display: flex;
     flex-direction: column;
@@ -17,9 +17,9 @@ body.barber-dashboard {
    =========================== */
 
 .barber-header {
-    background-color: #1a1a1a;
-    border-bottom: 2px solid var(--color-primary);
-    padding: 15px 25px;
+    background-color: #050505;
+    border-bottom: 1px solid #1f1f1f;
+    padding: 16px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -28,27 +28,12 @@ body.barber-dashboard {
 .barber-logo {
     font-family: var(--font-title);
     font-size: 1.8rem;
-    color: var(--color-white);
+    color: #ffffff;
 }
 
-.barber-logo span {
-    color: var(--color-primary);
-}
-
-.logout-btn {
-    background: none;
-    border: 1px solid var(--color-primary);
-    color: var(--color-primary);
-    padding: 6px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-}
-.logout-btn:hover {
-    background-color: var(--color-primary);
-    color: #000;
-}
+    .barber-logo span {
+        color: #ffffff;
+    }
 
 /* ===========================
    Tabs
@@ -56,29 +41,34 @@ body.barber-dashboard {
 
 .barber-tabs {
     display: flex;
-    background-color: #121212;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background-color: #050505;
+    border-bottom: 1px solid #1f1f1f;
 }
 
 .tab-btn {
     flex: 1;
-    padding: 15px;
+    padding: 14px;
     border: none;
     background: transparent;
-    color: #aaa;
+    color: #8d8d8d;
     font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
     font-family: var(--font-body);
 }
-.tab-btn:hover {
-    color: var(--color-primary);
-}
-.tab-btn.active {
-    color: var(--color-white);
-    background-color: #1a1a1a;
-    border-bottom: 2px solid var(--color-primary);
-}
+
+    .tab-btn:hover {
+        color: #ffffff;
+    }
+
+    .tab-btn.active {
+        color: #ffffff;
+        background-color: #101010;
+        border-bottom: 2px solid #ffffff;
+    }
 
 /* ===========================
    Content Area
@@ -86,15 +76,16 @@ body.barber-dashboard {
 
 .barber-content {
     flex: 1;
-    padding: 40px 20px;
+    padding: 30px 20px 40px;
 }
 
 .tab-section {
     display: none;
 }
-.tab-section.active {
-    display: block;
-}
+
+    .tab-section.active {
+        display: block;
+    }
 
 /* ===========================
    Disponibilità
@@ -103,32 +94,29 @@ body.barber-dashboard {
 .availability-controls {
     display: flex;
     gap: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     flex-wrap: wrap;
 }
 
 input[type="date"],
 input[type="time"],
 input[type="password"] {
-    padding: 10px;
-    border: 1px solid #333;
-    border-radius: 6px;
-    background-color: #1a1a1a;
-    color: #fff;
+    padding: 10px 12px;
+    border-radius: 999px;
+    border: 1px solid #2b2b2b;
+    background-color: #080808;
+    color: #f5f5f5;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
-.btn-primary {
-    background-color: var(--color-primary);
-    color: #000;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.btn-primary:hover {
-    background-color: var(--color-accent);
-}
+    input[type="date"]:focus,
+    input[type="time"]:focus,
+    input[type="password"]:focus {
+        border-color: #ffffff;
+        background-color: #101010;
+    }
 
 /* ===========================
    Liste semplici
@@ -138,48 +126,153 @@ input[type="password"] {
     list-style: none;
     padding: 0;
 }
-.simple-list li {
-    background-color: #1a1a1a;
-    border: 1px solid rgba(255,255,255,0.05);
-    padding: 10px 14px;
-    margin-bottom: 8px;
-    border-radius: 6px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-.simple-list li span {
-    color: var(--color-primary);
-    font-weight: 500;
-}
-.simple-list li button {
-    background: none;
-    border: 1px solid var(--color-primary);
-    color: var(--color-primary);
-    padding: 4px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-.simple-list li button:hover {
-    background-color: var(--color-primary);
-    color: #000;
-}
+
+    .simple-list li {
+        background-color: #101010;
+        border: 1px solid #232323;
+        padding: 10px 14px;
+        margin-bottom: 8px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .simple-list li span {
+            color: #f5f5f5;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .simple-list li button {
+            border-radius: 999px;
+            border: 1px solid #ffffff;
+            background: transparent;
+            color: #ffffff;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+        }
+
+            .simple-list li button:hover {
+                background-color: #ffffff;
+                color: #000;
+                transform: translateY(-1px);
+            }
 
 /* ===========================
    Impostazioni
    =========================== */
 
 .settings-card {
-    background-color: #1a1a1a;
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 10px;
-    padding: 20px;
-    width: 300px;
+    background-color: #101010;
+    border: 1px solid #232323;
+    border-radius: 16px;
+    padding: 20px 18px;
+    width: 320px;
+    max-width: 100%;
+    box-shadow: 0 20px 55px rgba(0, 0, 0, 0.85);
 }
-.settings-card h3 {
-    color: var(--color-primary);
-    margin-bottom: 10px;
+
+    .settings-card h3 {
+        color: #ffffff;
+        margin-bottom: 10px;
+        font-family: var(--font-title);
+        font-size: 1.2rem;
+    }
+
+/* ===========================
+   LOGIN PAGE (barber/login.html)
+   =========================== */
+
+body.barber-login-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #050505;
+    font-family: var(--font-body);
+    color: #f5f5f5;
 }
+
+    body.barber-login-page .site-logo {
+        display: block;
+        margin: 0 auto 18px auto;
+        width: 90px;
+    }
+
+.login-container {
+    position: relative;
+    background-color: #101010;
+    border: 1px solid #252525;
+    border-radius: 18px;
+    padding: 34px 26px 24px;
+    width: 380px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.9);
+}
+
+.login-title {
+    font-family: var(--font-title);
+    font-size: 2.1rem;
+    color: #ffffff;
+    margin-bottom: 8px;
+}
+
+.login-subtitle {
+    color: #a8a8a8;
+    margin-bottom: 22px;
+    font-size: 0.95rem;
+}
+
+.login-card {
+    /* per coerenza con client */
+}
+
+.login-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 999px;
+    border: 1px solid #333;
+    background-color: #080808;
+    color: #f5f5f5;
+    margin-bottom: 16px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+    .login-input:focus {
+        border-color: #ffffff;
+        background-color: #101010;
+    }
+
+.login-note {
+    font-size: 0.85rem;
+    color: #a8a8a8;
+    margin-top: 8px;
+}
+
+.back-home {
+    display: inline-block;
+    margin-top: 22px;
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+    .back-home:hover {
+        color: #ffffff;
+        opacity: 0.9;
+    }
 
 /* ===========================
    Responsive
@@ -191,119 +284,12 @@ input[type="password"] {
     }
 
     .tab-btn {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         padding: 12px;
     }
-}
-/* ===========================
-   LOGIN PAGE (barber/login.html)
-   =========================== */
 
-body.barber-login-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: url("../img/barber-bg.jpg") no-repeat center center fixed;
-    background-size: cover;
-    position: relative;
-    font-family: var(--font-body);
-    color: #fff;
-}
-
-body.barber-login-page::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(12, 12, 12, 0.8);
-    z-index: 0;
-}
-
-.login-container {
-    position: relative;
-    z-index: 1;
-    background-color: rgba(26, 26, 26, 0.95);
-    border: 2px solid var(--color-primary);
-    border-radius: 15px;
-    padding: 50px 40px;
-    width: 380px;
-    text-align: center;
-    box-shadow: 0 0 25px rgba(212, 175, 55, 0.15);
-}
-
-.login-logo {
-    font-size: 3.5rem;
-    color: var(--color-primary);
-    margin-bottom: 15px;
-    text-shadow: 0 0 10px rgba(212, 175, 55, 0.25);
-}
-
-.login-title {
-    font-family: var(--font-title);
-    font-size: 2.4rem;
-    color: var(--color-primary);
-    margin-bottom: 10px;
-}
-
-.login-subtitle {
-    color: rgba(255,255,255,0.7);
-    margin-bottom: 25px;
-}
-
-.login-input {
-    width: 100%;
-    padding: 14px;
-    border: 1px solid #333;
-    border-radius: 8px;
-    background-color: #111;
-    color: #fff;
-    margin-bottom: 20px;
-    font-size: 1rem;
-}
-
-.login-btn {
-    width: 100%;
-    padding: 12px;
-    background-color: var(--color-primary);
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.login-btn:hover {
-    background-color: var(--color-accent);
-}
-
-.login-note {
-    font-size: 0.9rem;
-    color: rgba(255,255,255,0.7);
-    margin-top: 15px;
-}
-
-.back-home {
-    display: inline-block;
-    margin-top: 25px;
-    color: var(--color-primary);
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.3s ease;
-}
-.back-home:hover {
-    color: var(--color-accent);
-}
-/* Allineamento logo pagina login barber */
-body.barber-login-page .login-container {
-    margin-top: 0px; /* alza o abbassa la card complessiva */
-}
-
-body.barber-login-page .site-logo {
-    display: block;
-    margin: 0 auto 0px auto; /* centrato e con spazio sotto */
-    width: 90px;
-    filter: drop-shadow(0 0 6px rgba(212,175,55,0.4));
+    .login-container {
+        width: 100%;
+        margin: 0 16px;
+    }
 }

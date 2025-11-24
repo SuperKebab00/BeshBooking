@@ -1,63 +1,70 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Prenotazione Cliente</title>
+  <meta charset="UTF-8">
+  <title>Prenotazione - BeshBarber</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-
-    <!-- Styles -->
-    <link rel="stylesheet" href="../assets/css/style.css" />
-    <link rel="stylesheet" href="../assets/css/client.css" />
+  <link rel="stylesheet" href="../assets/css/client.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body class="client-booking-page">
 
-    <header class="client-header">
-        <a href="../index.html" class="logo-link">
-            <img src="../assets/img/logo.png" alt="BarberBook Logo" class="site-logo" />
-        </a>
-        <button id="logoutClientBtn" class="logout-btn">Logout</button>
-    </header>
+  <header class="client-header">
+    <a href="../index.html" class="logo-link">
+      <img src="../assets/img/logo.png" alt="BarberBook" class="site-logo-small">
+    </a>
 
-    <main class="client-content">
-        <h1>Prenota il tuo appuntamento</h1>
+    <button id="logoutClientBtn" class="btn-logout-small">Logout</button>
+  </header>
 
-        <div class="booking-controls">
-            <label for="datePicker">Seleziona una data:</label>
-            <input type="date" id="datePicker" />
-        </div>
+  <main class="booking-page-main">
 
-        <div class="available-slots">
-            <h2>Fasce orarie disponibili</h2>
-            <ul id="slotList" class="slot-list"></ul>
-        </div>
+    <h2 class="booking-title">Prenota ora</h2>
 
-        <div class="booking-form" id="bookingForm" style="display:none;">
-            <h2>Completa la prenotazione</h2>
-            <input type="text" id="clientName" placeholder="Il tuo nome" class="login-input" />
-            <button id="confirmBookingBtn" class="login-btn">Conferma Prenotazione</button>
-        </div>
-    </main>
-
-    <footer class="client-footer">
-        <p>© 2025 BarberBook</p>
-    </footer>
-    <!-- Modal globale -->
-    <div class="app-modal-overlay" id="appModal">
-        <div class="app-modal">
-            <h2 class="app-modal-title" id="appModalTitle">Avviso</h2>
-            <p class="app-modal-message" id="appModalMessage"></p>
-            <div class="app-modal-actions">
-                <button type="button" class="btn-secondary" id="appModalCancel">Annulla</button>
-                <button type="button" class="btn-primary" id="appModalOk">OK</button>
-            </div>
-        </div>
+    <!-- SELETTORE DATA -->
+    <div class="date-selector">
+      <label>Seleziona data</label>
+      <input type="date" id="datePicker">
     </div>
-    <script src="../scripts/storage.js"></script>
-    <script src="../scripts/ui.js"></script>
-    <script src="client.js"></script>
+
+    <!-- LISTA SLOT -->
+    <div class="slot-section">
+      <h3 class="section-title">Fasce disponibili</h3>
+      <ul id="slotList" class="slot-list"></ul>
+    </div>
+
+    <!-- FORM PRENOTAZIONE -->
+    <div id="bookingForm" class="booking-form-container" style="display:none;">
+      <h3>Conferma prenotazione</h3>
+
+      <label>Il tuo nome</label>
+      <input id="clientName" type="text" placeholder="Mario Rossi" class="booking-input">
+
+      <button id="confirmBookingBtn" class="btn-gold">
+        Conferma
+      </button>
+    </div>
+
+  </main>
+
+  <!-- MODAL da ui.js -->
+  <div class="app-modal-overlay" id="appModal">
+    <div class="app-modal">
+      <h2 class="app-modal-title" id="appModalTitle"></h2>
+      <p class="app-modal-message" id="appModalMessage"></p>
+      <div class="app-modal-actions">
+        <button class="btn-secondary" id="appModalCancel">Annulla</button>
+        <button class="btn-primary" id="appModalOk">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../scripts/ui.js"></script>
+  <script src="client.js"></script>
+
 </body>
 </html>

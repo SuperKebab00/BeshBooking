@@ -1,51 +1,58 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Accesso Cliente</title>
+  <meta charset="UTF-8">
+  <title>Login Cliente - BeshBarber</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/style.css" />
-  <link rel="stylesheet" href="../assets/css/client.css" />
+  <link rel="stylesheet" href="../assets/css/client.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body class="client-login-page">
 
-    <a href="../index.html" class="logo-link">
-        <img src="../assets/img/logo.png" alt="BarberBook Logo" class="site-logo" />
-    </a>
+  <a href="../index.html" class="logo-link">
+    <img src="../assets/img/logo.png" alt="BarberBook Logo" class="site-logo">
+  </a>
 
-    <div class="login-container">
-        <h1 class="login-title">Area Clienti</h1>
-        <p class="login-subtitle">Inserisci il tuo numero di telefono per accedere</p>
+  <div class="login-container">
+    <h1 class="login-title">Area Clienti</h1>
+    <p class="login-subtitle">Accedi con la tua email. Riceverai un link di accesso.</p>
 
-        <div id="step-phone" class="login-card active">
-            <input type="tel" id="phoneInput" placeholder="+39 333 1234567" class="login-input" />
-            <button id="sendOtpBtn" class="login-btn">Invia codice</button>
-        </div>
+    <div class="login-card">
+      <input 
+        type="email" 
+        id="emailInput" 
+        class="login-input" 
+        placeholder="la-tua-email@example.com"
+      >
 
-        <div id="step-otp" class="login-card">
-            <p class="otp-info">Il tuo codice è: <span id="otpDisplay" class="otp-code"></span></p>
-            <input type="text" id="otpInput" placeholder="Inserisci codice" class="login-input" />
-            <button id="verifyOtpBtn" class="login-btn">Verifica</button>
-            <button id="backBtn" class="login-btn-secondary">← Indietro</button>
-        </div>
+      <button id="sendLoginLinkBtn" class="btn-full-black">
+        Invia link di accesso
+      </button>
 
+      <p class="login-note">
+        Nessuna password necessaria. Accedi in modo sicuro via email.
+      </p>
     </div>
-    <!-- Modal globale -->
-    <div class="app-modal-overlay" id="appModal">
-        <div class="app-modal">
-            <h2 class="app-modal-title" id="appModalTitle">Avviso</h2>
-            <p class="app-modal-message" id="appModalMessage"></p>
-            <div class="app-modal-actions">
-                <button type="button" class="btn-secondary" id="appModalCancel">Annulla</button>
-                <button type="button" class="btn-primary" id="appModalOk">OK</button>
-            </div>
-        </div>
+  </div>
+
+  <!-- Modal globale (da ui.js) -->
+  <div class="app-modal-overlay" id="appModal">
+    <div class="app-modal">
+      <h2 class="app-modal-title" id="appModalTitle">Avviso</h2>
+      <p class="app-modal-message" id="appModalMessage"></p>
+      <div class="app-modal-actions">
+        <button class="btn-secondary" id="appModalCancel">Annulla</button>
+        <button class="btn-primary" id="appModalOk">OK</button>
+      </div>
     </div>
-    <script src="../scripts/storage.js"></script>
-    <script src="../scripts/ui.js"></script> 
-    <script src="client.js"></script>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="../scripts/ui.js"></script>
+  <script src="client.js"></script>
+
 </body>
 </html>

@@ -1,293 +1,379 @@
 /* ==========================================
-   barber.js - versione aggiornata minimal
-   Login + Dashboard (tabs, disponibilità, prenotazioni, impostazioni)
-   Richiede: storage.js + ui.js
+   barber.js - Supabase Auth + Availability/Bookings
    ========================================== */
 
-/* ---------- Helpers UI ---------- */
-function _msgOk(t) { showMessage(t, "success"); }
-function _msgErr(t) { showMessage(t, "error"); }
+const SUPABASE_URL = "https://osezloxbxmifcdrcxzfw.supabase.co";
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zZXpsb3hieG1pZmNkcmN4emZ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5MDk3MjcsImV4cCI6MjA3OTQ4NTcyN30.ylLZaZV3ubc-TWNqIjJzH3-w4oNsmIRmK-4QCJhqyqQ";
 
-/* ---------- Date helpers ---------- */
-function toKey(dateStr) { return dateStr; }
-function todayKey() {
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const supaBarber = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+/* Helpers */
+function _msgOk(t) {
+  showMessage(t, "success");
+}
+function _msgErr(t) {
+  showMessage(t, "error");
 }
 
-/* ---------- Sessione ---------- */
-const SESSION_KEY = "barberLoggedIn";
-function setLoggedIn(v) { sessionStorage.setItem(SESSION_KEY, v ? "1" : "0"); }
-function isLoggedIn() { return sessionStorage.getItem(SESSION_KEY) === "1"; }
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
+    2,
+    "0"
+  )}-${String(d.getDate()).padStart(2, "0")}`;
+}
 
 /* =========================================================
-   LOGIN BARBIERE
-   ========================================================= */
-(function initLoginPage() {
-    const pwdInput = document.getElementById("passwordInput");
-    const btn = document.getElementById("loginBtn");
-    const note = document.getElementById("firstTimeNote");
+   LOGIN BARBER
+========================================================= */
+(function initBarberLoginPage() {
+  const emailInput = document.getElementById("barberEmailInput");
+  const btn = document.getElementById("barberLoginBtn");
 
-    if (!pwdInput || !btn) return;
+  if (!emailInput || !btn) return;
 
-    const storedHash = getBarberPassword();
-    if (!storedHash && note) {
-        note.style.display = "block";
-        btn.textContent = "Imposta password";
+  btn.addEventListener("click", async () => {
+    const email = (emailInput.value || "").trim();
+    if (!email) {
+      _msgErr("Inserisci una email valida.");
+      return;
     }
 
-    btn.addEventListener("click", async () => {
-        const pwd = (pwdInput.value || "").trim();
-        if (!pwd) return _msgErr("Inserisci una password.");
+    try {
+      const { error } = await supaBarber.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: true,
+          // emailRedirectTo: "https://superkebab00.github.io/BeshBooking/barber/dashboard.html"
+        },
+      });
 
-        const currentHash = getBarberPassword();
-        const userHash = await hashPassword(pwd);
+      if (error) {
+        console.error(error);
+        _msgErr(error.message || "Errore durante l'invio dell'email.");
+        return;
+      }
 
-        if (!currentHash) {
-            saveBarberPassword(userHash);
-            _msgOk("Password impostata.");
-            setLoggedIn(true);
-            window.location.href = "dashboard.html";
-            return;
-        }
+      openModal({
+        title: "Controlla la tua email",
+        message:
+          "Ti abbiamo inviato un link di accesso. Cliccalo per continuare.",
+        showCancel: false,
+      });
+    } catch (e) {
+      console.error(e);
+      _msgErr("Errore imprevisto durante il login.");
+    }
+  });
 
-        if (userHash === currentHash) {
-            _msgOk("Accesso eseguito.");
-            setLoggedIn(true);
-            window.location.href = "dashboard.html";
-        } else {
-            _msgErr("Password errata.");
-        }
-    });
+  supaBarber.auth.getUser().then(async ({ data }) => {
+    if (data && data.user) {
+      const isBarber = await checkIsBarber(data.user.id);
+      if (isBarber) window.location.href = "dashboard.html";
+    }
+  });
 })();
+
+/* Verifica ruolo barbiere */
+async function checkIsBarber(authUserId) {
+  const { data, error } = await supaBarber
+    .from("clients")
+    .select("is_barber")
+    .eq("auth_id", authUserId)
+    .maybeSingle();
+
+  if (error) return false;
+  return data && data.is_barber;
+}
 
 /* =========================================================
    DASHBOARD BARBIERE
-   ========================================================= */
-(function initDashboard() {
-    const headerLogout = document.getElementById("logoutBtn");
-    const tabsBar = document.querySelector(".barber-tabs");
-    const tabButtons = document.querySelectorAll(".tab-btn");
-    const sections = document.querySelectorAll(".tab-section");
+========================================================= */
+(function initBarberDashboard() {
+  const tabsBar = document.querySelector(".barber-tabs");
+  const headerLogout = document.getElementById("logoutBtn");
+  const tabButtons = document.querySelectorAll(".tab-btn");
+  const sections = document.querySelectorAll(".tab-section");
 
-    const availDate = document.getElementById("availDate");
-    const availTime = document.getElementById("availTime");
-    const addSlotBtn = document.getElementById("addSlotBtn");
-    const availList = document.getElementById("availList");
+  const availDate = document.getElementById("availDate");
+  const availTime = document.getElementById("availTime");
+  const addSlotBtn = document.getElementById("addSlotBtn");
+  const availList = document.getElementById("availList");
 
-    const bookingDate = document.getElementById("bookingDate");
-    const bookingList = document.getElementById("bookingList");
+  const bookingDate = document.getElementById("bookingDate");
+  const bookingList = document.getElementById("bookingList");
 
-    const newPassword = document.getElementById("newPassword");
-    const changePwdBtn = document.getElementById("changePwdBtn");
+  const changePwdBtn = document.getElementById("changePwdBtn");
 
-    if (!tabsBar) return;
+  if (!tabsBar) return;
 
-    if (!isLoggedIn()) {
-        window.location.href = "login.html";
-        return;
+  let currentUser = null;
+
+  async function requireBarberAuth() {
+    const { data } = await supaBarber.auth.getUser();
+    if (!data || !data.user) {
+      window.location.href = "login.html";
+      return null;
     }
 
-    /* ---------- Logout ---------- */
-    if (headerLogout) {
-        headerLogout.addEventListener("click", () => {
-            openModal({
-                title: "Logout",
-                message: "Vuoi davvero uscire?",
-                showCancel: true
-            }).then(ok => {
-                if (ok) {
-                    setLoggedIn(false);
-                    window.location.href = "login.html";
-                }
-            });
-        });
+    const isBarber = await checkIsBarber(data.user.id);
+    if (!isBarber) {
+      await openModal({
+        title: "Accesso non autorizzato",
+        message: "Questo account non è configurato come barbiere.",
+      });
+      window.location.href = "../index.html";
+      return null;
     }
 
-    /* ---------- Tabs ---------- */
-    tabButtons.forEach((btn) => {
-        btn.addEventListener("click", () => {
-            tabButtons.forEach((b) => b.classList.remove("active"));
-            sections.forEach((s) => s.classList.remove("active"));
-            btn.classList.add("active");
+    currentUser = data.user;
+    return currentUser;
+  }
 
-            const id = btn.dataset.tab;
-            const section = document.getElementById(`tab-${id}`);
-            if (section) section.classList.add("active");
+  /* Logout */
+  if (headerLogout) {
+    headerLogout.addEventListener("click", async () => {
+      const ok = await openModal({
+        title: "Logout",
+        message: "Vuoi davvero uscire?",
+        showCancel: true,
+      });
+      if (!ok) return;
+      await supaBarber.auth.signOut();
+      window.location.href = "login.html";
+    });
+  }
+
+  /* Tabs */
+  tabButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      tabButtons.forEach((b) => b.classList.remove("active"));
+      sections.forEach((s) => s.classList.remove("active"));
+      btn.classList.add("active");
+      document
+        .getElementById(`tab-${btn.dataset.tab}`)
+        .classList.add("active");
+    });
+  });
+
+  /* ---------------------------------------------------------
+     AVAILABILITY - DB
+  --------------------------------------------------------- */
+  async function loadAvailability(dateKey) {
+    const { data, error } = await supaBarber
+      .from("availability")
+      .select("id, time")
+      .eq("date", dateKey)
+      .eq("barber_id", currentUser.id)
+      .order("time", { ascending: true });
+
+    return error ? [] : data;
+  }
+
+  async function renderAvailList(dateKey) {
+    availList.innerHTML = "";
+
+    const slots = await loadAvailability(dateKey);
+
+    if (!slots.length) {
+      const li = document.createElement("li");
+      li.textContent = "Nessuna fascia disponibile per questa data.";
+      availList.appendChild(li);
+      return;
+    }
+
+    slots.forEach((slot) => {
+      const li = document.createElement("li");
+      const left = document.createElement("div");
+      left.innerHTML = `Fascia: <span>${slot.time}</span>`;
+
+      const removeBtn = document.createElement("button");
+      removeBtn.textContent = "Rimuovi";
+      removeBtn.addEventListener("click", async () => {
+        const ok = await openModal({
+          title: "Rimuovere fascia?",
+          message: `Rimuovere la fascia delle ${slot.time}?`,
+          showCancel: true,
         });
+        if (!ok) return;
+
+        await supaBarber.from("availability").delete().eq("id", slot.id);
+
+        await renderAvailList(dateKey);
+        _msgOk("Fascia rimossa.");
+      });
+
+      li.appendChild(left);
+      li.appendChild(removeBtn);
+      availList.appendChild(li);
+    });
+  }
+
+  function initAvailability() {
+    availDate.value = todayKey();
+    renderAvailList(availDate.value);
+
+    availDate.addEventListener("change", () => {
+      renderAvailList(availDate.value);
     });
 
-    /* ---------- Availability ---------- */
-    function loadAvailabilityFor(dateKey) {
-        const availability = getAvailability();
-        return availability[dateKey] || [];
+    addSlotBtn.addEventListener("click", async () => {
+      const d = availDate.value;
+      const t = (availTime.value || "").trim();
+
+      if (!d || !t) return _msgErr("Inserisci data e orario.");
+
+      if (!/^\d{2}:\d{2}$/.test(t))
+        return _msgErr("Formato orario non valido (HH:MM).");
+
+      const existing = await loadAvailability(d);
+      if (existing.some((s) => s.time === t))
+        return _msgErr("Questa fascia esiste già.");
+
+      await supaBarber.from("availability").insert({
+        date: d,
+        time: t,
+        barber_id: currentUser.id,
+      });
+
+      availTime.value = "";
+      await renderAvailList(d);
+      _msgOk("Aggiunta!");
+    });
+  }
+
+  /* ---------------------------------------------------------
+     BOOKINGS - DB (+ pagamento)
+  --------------------------------------------------------- */
+  async function loadBookings(dateKey) {
+    const { data } = await supaBarber
+      .from("bookings")
+      .select("id, time, date, has_paid, amount_paid, clients(name, email)")
+      .eq("date", dateKey)
+      .order("time", { ascending: true });
+
+    return data || [];
+  }
+
+  async function renderBookingList(dateKey) {
+    bookingList.innerHTML = "";
+
+    const list = await loadBookings(dateKey);
+
+    if (!list.length) {
+      const li = document.createElement("li");
+      li.textContent = "Nessuna prenotazione per questa data.";
+      bookingList.appendChild(li);
+      return;
     }
 
-    function saveAvailabilityFor(dateKey, slots) {
-        const availability = getAvailability();
-        availability[dateKey] = slots;
-        saveAvailability(availability);
-    }
+    list.forEach((bk) => {
+      const li = document.createElement("li");
 
-    function renderAvailList(dateKey) {
-        if (!availList) return;
-        const slots = loadAvailabilityFor(dateKey).slice().sort();
-        availList.innerHTML = "";
+      const left = document.createElement("div");
+      const name = bk.clients?.name || "Cliente";
+      const email = bk.clients?.email || "-";
+      left.innerHTML = `Ore <span>${bk.time}</span> — ${name} (${email})`;
 
-        if (slots.length === 0) {
-            const li = document.createElement("li");
-            li.textContent = "Nessuna fascia disponibile.";
-            availList.appendChild(li);
-            return;
-        }
+      /* --- BOX PAGAMENTO --- */
+      const paymentBox = document.createElement("div");
+      paymentBox.className = "payment-box";
 
-        slots.forEach((time) => {
-            const li = document.createElement("li");
-            const left = document.createElement("div");
-            left.innerHTML = `Fascia: <span>${time}</span>`;
+      const paidCheckbox = document.createElement("input");
+      paidCheckbox.type = "checkbox";
+      paidCheckbox.checked = bk.has_paid;
 
-            const removeBtn = document.createElement("button");
-            removeBtn.textContent = "Rimuovi";
+      const amountInput = document.createElement("input");
+      amountInput.type = "number";
+      amountInput.step = "0.01";
+      amountInput.value = bk.amount_paid;
 
-            removeBtn.addEventListener("click", async () => {
-                openModal({
-                    title: "Rimuovere fascia?",
-                    message: `Vuoi rimuovere la fascia delle ${time}?`,
-                    showCancel: true
-                }).then(ok => {
-                    if (!ok) return;
+      const savePaymentBtn = document.createElement("button");
+      savePaymentBtn.textContent = "Salva pagamento";
+      savePaymentBtn.addEventListener("click", async () => {
+        await supaBarber
+          .from("bookings")
+          .update({
+            has_paid: paidCheckbox.checked,
+            amount_paid: Number(amountInput.value),
+          })
+          .eq("id", bk.id);
 
-                    const updated = loadAvailabilityFor(dateKey).filter((t) => t !== time);
-                    saveAvailabilityFor(dateKey, updated);
-                    _msgOk("Fascia rimossa.");
-                    renderAvailList(dateKey);
-                });
-            });
+        _msgOk("Pagamento aggiornato.");
+      });
 
-            li.appendChild(left);
-            li.appendChild(removeBtn);
-            availList.appendChild(li);
+      paymentBox.appendChild(paidCheckbox);
+      paymentBox.appendChild(amountInput);
+      paymentBox.appendChild(savePaymentBtn);
+
+      /* --- CANCELLAZIONE --- */
+      const cancelBtn = document.createElement("button");
+      cancelBtn.textContent = "Annulla";
+
+      cancelBtn.addEventListener("click", async () => {
+        const ok = await openModal({
+          title: "Annullare?",
+          message: `Annullare la prenotazione delle ${bk.time}?`,
+          showCancel: true,
         });
-    }
+        if (!ok) return;
 
-    function initAvailability() {
-        if (availDate) {
-            availDate.value = todayKey();
-            renderAvailList(availDate.value);
-            availDate.addEventListener("change", () => renderAvailList(availDate.value));
-        }
-
-        if (addSlotBtn) {
-            addSlotBtn.addEventListener("click", () => {
-                const d = availDate ? toKey(availDate.value) : todayKey();
-                const t = availTime ? availTime.value.trim() : "";
-
-                if (!d || !t) return _msgErr("Seleziona data e orario.");
-
-                if (!/^\d{2}:\d{2}$/.test(t)) return _msgErr("Formato orario non valido.");
-
-                const current = loadAvailabilityFor(d);
-                if (current.includes(t)) return _msgErr("Fascia già presente.");
-
-                current.push(t);
-                saveAvailabilityFor(d, current);
-                _msgOk("Fascia aggiunta.");
-                renderAvailList(d);
-                availTime.value = "";
-            });
-        }
-    }
-
-    /* ---------- Prenotazioni ---------- */
-    function loadBookingsFor(dateKey) {
-        const bookings = getBookings();
-        return bookings[dateKey] || [];
-    }
-
-    function saveBookingsFor(dateKey, list) {
-        const bookings = getBookings();
-        bookings[dateKey] = list;
-        saveBookings(bookings);
-    }
-
-    function renderBookingList(dateKey) {
-        if (!bookingList) return;
-        const list = loadBookingsFor(dateKey).slice().sort((a, b) => a.time.localeCompare(b.time));
-        bookingList.innerHTML = "";
-
-        if (list.length === 0) {
-            const li = document.createElement("li");
-            li.textContent = "Nessuna prenotazione.";
-            bookingList.appendChild(li);
-            return;
-        }
-
-        list.forEach((bk, idx) => {
-            const li = document.createElement("li");
-            const left = document.createElement("div");
-
-            left.innerHTML = `Ore <span>${bk.time}</span> — ${bk.name} (${bk.phone})`;
-
-            const cancelBtn = document.createElement("button");
-            cancelBtn.textContent = "Annulla";
-
-            cancelBtn.addEventListener("click", () => {
-                openModal({
-                    title: "Annullare prenotazione?",
-                    message: `Vuoi annullare la prenotazione delle ${bk.time}?`,
-                    showCancel: true
-                }).then(ok => {
-                    if (!ok) return;
-
-                    const now = loadBookingsFor(dateKey);
-                    now.splice(idx, 1);
-                    saveBookingsFor(dateKey, now);
-
-                    const avail = loadAvailabilityFor(dateKey);
-                    if (!avail.includes(bk.time)) {
-                        avail.push(bk.time);
-                        saveAvailabilityFor(dateKey, avail);
-                    }
-
-                    _msgOk("Prenotazione annullata.");
-                    renderBookingList(dateKey);
-                    if (availDate && availDate.value === dateKey) renderAvailList(dateKey);
-                });
-            });
-
-            li.appendChild(left);
-            li.appendChild(cancelBtn);
-            bookingList.appendChild(li);
+        await supaBarber.from("bookings").delete().eq("id", bk.id);
+        await supaBarber.from("availability").insert({
+          date: dateKey,
+          time: bk.time,
+          barber_id: currentUser.id,
         });
+
+        await renderBookingList(dateKey);
+        await renderAvailList(dateKey);
+        _msgOk("Prenotazione annullata.");
+      });
+
+      li.appendChild(left);
+      li.appendChild(paymentBox);
+      li.appendChild(cancelBtn);
+
+      bookingList.appendChild(li);
+    });
+  }
+
+  function initBookings() {
+    bookingDate.value = todayKey();
+    renderBookingList(bookingDate.value);
+    bookingDate.addEventListener("change", () => {
+      renderBookingList(bookingDate.value);
+    });
+  }
+
+  /* ---------------------------------------------------------
+     SETTINGS
+  --------------------------------------------------------- */
+  function initSettings() {
+    if (changePwdBtn) {
+      changePwdBtn.addEventListener("click", () => {
+        openModal({
+          title: "Impostazioni",
+          message:
+            "La gestione password avviene via email OTP su Supabase. In futuro possiamo aggiungere nome, telefono, foto profilo.",
+        });
+      });
     }
+  }
 
-    function initBookings() {
-        if (bookingDate) {
-            bookingDate.value = todayKey();
-            renderBookingList(bookingDate.value);
-            bookingDate.addEventListener("change", () => {
-                renderBookingList(bookingDate.value);
-            });
-        }
-    }
+  /* ---------------------------------------------------------
+     INIT
+  --------------------------------------------------------- */
+  (async function init() {
+    const user = await requireBarberAuth();
+    if (!user) return;
 
-    /* ---------- Impostazioni ---------- */
-    function initSettings() {
-        if (changePwdBtn) {
-            changePwdBtn.addEventListener("click", async () => {
-                const pwd = newPassword.value.trim();
-                if (!pwd) return _msgErr("Inserisci una nuova password.");
-
-                const h = await hashPassword(pwd);
-                saveBarberPassword(h);
-                newPassword.value = "";
-                _msgOk("Password aggiornata.");
-            });
-        }
-    }
-
-    /* ---------- Init ---------- */
     initAvailability();
     initBookings();
     initSettings();
+  })();
 })();

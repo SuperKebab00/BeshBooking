@@ -1,304 +1,305 @@
 /* ==========================================
-   client.css – Area clienti (login + booking)
-   Minimal B/W
+   client.css â€“ Area clienti (login + booking)
+   Minimal, Elegant, Apple-style
    ========================================== */
 
-/* Layout base per login + booking */
+/* FONT & RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #000;
+    --bg-light: #0a0a0a;
+    --panel: #111;
+    --panel-dark: #0d0d0d;
+    --border: #222;
+    --border-light: #333;
+    --text: #f7f7f7;
+    --text-soft: #c7c7c7;
+    --accent: #ffffff;
+    --radius: 16px;
+    --radius-pill: 999px;
+    --shadow-big: 0 30px 80px rgba(0,0,0,0.65);
+    --shadow-panel: 0 20px 55px rgba(0,0,0,0.75);
+}
+
+/* BODY */
 body.client-login-page,
 body.client-booking-page {
-    background-color: #050505;
-    color: #f5f5f5;
-    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Cormorant Garamond", serif;
     min-height: 100vh;
+    padding: 40px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    animation: fadeIn 0.4s ease-out;
 }
 
-/* ===========================
-   Header (booking page)
-   =========================== */
+/* Fade-in */
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(5px);}
+    to   {opacity: 1; transform: translateY(0);}
+}
+
+/* ==========================================
+   HEADER (Booking)
+   ========================================== */
 
 .client-header {
     width: 100%;
-    background-color: #050505;
-    border-bottom: 1px solid #1f1f1f;
-    padding: 16px 20px;
+    max-width: 900px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 40px;
 }
 
-.client-logo {
-    font-family: var(--font-title);
-    font-size: 1.6rem;
-    color: #ffffff;
+.site-logo-small {
+    width: 64px;
+    height: auto;
 }
 
-    .client-logo span {
-        color: #ffffff;
-    }
+.btn-logout-small {
+    padding: 8px 18px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--accent);
+    background: transparent;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    transition: 0.25s;
+}
 
-/* ===========================
-   Login Page
-   =========================== */
+.btn-logout-small:hover {
+    background: var(--accent);
+    color: #000;
+    transform: translateY(-2px);
+}
 
-.login-container {
-    margin-top: 80px;
+/* ==========================================
+   LOGIN PAGE
+   ========================================== */
+
+.login-header {
+    margin-bottom: 30px;
+}
+
+.site-logo-login {
+    width: 110px;
+    display: block;
+    margin: 0 auto 20px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.login-main {
     text-align: center;
-    max-width: 360px;
-    width: 90%;
+    width: 100%;
+    max-width: 420px;
 }
 
 .login-title {
-    font-family: var(--font-title);
-    font-size: 2.2rem;
-    color: #ffffff;
-    margin-bottom: 8px;
-}
-
-.login-subtitle {
-    font-size: 0.95rem;
-    color: #a8a8a8;
-    margin-bottom: 26px;
-}
-
-.login-card {
-    background-color: #101010;
-    border: 1px solid #252525;
-    border-radius: 16px;
-    padding: 24px 22px 20px;
-    display: none;
-    box-shadow: 0 20px 55px rgba(0, 0, 0, 0.85);
-}
-
-    .login-card.active {
-        display: block;
-    }
-
-.login-input {
-    width: 100%;
-    padding: 12px;
-    border-radius: 999px;
-    border: 1px solid #333;
-    background-color: #080808;
-    color: #f5f5f5;
-    margin-bottom: 14px;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.2s ease, background-color 0.2s ease;
-}
-
-    .login-input:focus {
-        border-color: #ffffff;
-        background-color: #101010;
-    }
-
-/* Bottoni login (riusano i globali) */
-
-.login-btn,
-.login-btn-secondary {
-    width: 100%;
+    font-size: 2.4rem;
     margin-bottom: 10px;
-}
-
-.login-btn-secondary {
-    border-radius: 999px;
-    border: 1px solid #2b2b2b;
-    background: transparent;
-    color: #e0e0e0;
-    padding: 10px 16px;
-    font-size: 0.9rem;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-}
-
-    .login-btn-secondary:hover {
-        background-color: #ffffff;
-        color: #000;
-        border-color: #ffffff;
-        transform: translateY(-1px);
-    }
-
-.otp-info {
-    margin-bottom: 8px;
-    color: #a8a8a8;
-    font-size: 0.9rem;
-}
-
-.otp-code {
-    color: #ffffff;
+    font-family: "Cormorant Garamond", serif;
     font-weight: 600;
 }
 
-/* ===========================
-   Booking Page
-   =========================== */
-
-.client-content {
-    flex: 1;
-    max-width: 720px;
-    width: 90%;
-    margin-top: 40px;
+.login-subtitle {
+    color: var(--text-soft);
+    margin-bottom: 30px;
+    font-size: 1rem;
 }
 
-    .client-content h1 {
-        font-family: var(--font-title);
-        font-size: 2rem;
-        text-align: center;
-        color: #ffffff;
-        margin-bottom: 22px;
-    }
+.login-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: var(--shadow-panel);
+}
 
-.booking-controls {
+.login-input {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-light);
+    background: var(--bg-light);
+    color: var(--text);
+    font-size: 1rem;
+    margin-bottom: 20px;
+    transition: 0.2s;
+}
+
+.login-input:focus {
+    border-color: var(--accent);
+    background: #111;
+}
+
+.btn-full-black {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: var(--radius-pill);
+    background: var(--accent);
+    color: #000;
+    border: none;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.btn-full-black:hover {
+    transform: translateY(-2px);
+    background: #e5e5e5;
+}
+
+.login-note {
+    margin-top: 14px;
+    color: var(--text-soft);
+    font-size: 0.85rem;
+}
+
+/* ==========================================
+   BOOKING PAGE
+   ========================================== */
+
+.booking-page-main {
+    width: 100%;
+    max-width: 700px;
+}
+
+.booking-title {
+    font-size: 2rem;
     text-align: center;
     margin-bottom: 20px;
 }
 
-    .booking-controls label {
-        display: block;
-        font-size: 0.9rem;
-        color: #a8a8a8;
-        margin-bottom: 6px;
-    }
-
-    .booking-controls input[type="date"] {
-        padding: 10px 12px;
-        background-color: #101010;
-        border: 1px solid #2b2b2b;
-        color: #f5f5f5;
-        border-radius: 999px;
-        font-size: 0.9rem;
-        outline: none;
-        transition: border-color 0.2s ease, background-color 0.2s ease;
-    }
-
-        .booking-controls input[type="date"]:focus {
-            border-color: #ffffff;
-            background-color: #151515;
-        }
-
-.available-slots {
-    background-color: #101010;
-    border: 1px solid #252525;
-    border-radius: 16px;
-    padding: 20px 18px;
-    margin-bottom: 22px;
-    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.85);
+.date-selector label {
+    color: var(--text-soft);
+    font-size: 0.95rem;
+    display: block;
+    margin-bottom: 6px;
 }
 
-    .available-slots h2 {
-        color: #ffffff;
-        margin-bottom: 14px;
-        font-family: var(--font-title);
-        font-size: 1.3rem;
-    }
+#datePicker {
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--radius-pill);
+    background: var(--bg-light);
+    border: 1px solid var(--border);
+    color: var(--text);
+    margin-bottom: 25px;
+    outline: none;
+    transition: 0.25s;
+}
+
+#datePicker:focus {
+    border-color: var(--accent);
+}
+
+/* SLOT BOX */
+
+.slot-section {
+    margin-bottom: 20px;
+}
+
+.slot-section .section-title {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+}
 
 .slot-list {
     list-style: none;
-    padding: 0;
 }
 
-    .slot-list li {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: #080808;
-        border: 1px solid #202020;
-        padding: 10px 14px;
-        border-radius: 999px;
-        margin-bottom: 10px;
-    }
-
-        .slot-list li span {
-            color: #f5f5f5;
-            font-size: 0.95rem;
-        }
-
-        .slot-list li button {
-            border-radius: 999px;
-            border: 1px solid #ffffff;
-            background: transparent;
-            color: #ffffff;
-            padding: 6px 14px;
-            font-size: 0.8rem;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
-        }
-
-            .slot-list li button:hover {
-                background-color: #ffffff;
-                color: #000;
-                transform: translateY(-1px);
-            }
-
-/* Form conferma prenotazione */
-
-.booking-form {
-    background-color: #101010;
-    border: 1px solid #252525;
-    border-radius: 16px;
-    padding: 20px 18px;
-    text-align: center;
-    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.85);
-}
-
-    .booking-form h2 {
-        color: #ffffff;
-        margin-bottom: 14px;
-        font-family: var(--font-title);
-        font-size: 1.3rem;
-    }
-
-/* ===========================
-   Footer
-   =========================== */
-
-.client-footer {
-    text-align: center;
-    padding: 14px 0;
-    font-size: 0.8rem;
-    color: #a8a8a8;
-    width: 100%;
-    background-color: #050505;
-    border-top: 1px solid #1a1a1a;
-}
-
-/* ===========================
-   Override specifico login
-   =========================== */
-
-body.client-login-page {
-    justify-content: center;
+.slot-list li {
+    background: var(--panel-dark);
+    border: 1px solid var(--border);
+    padding: 14px 18px;
+    border-radius: var(--radius-pill);
+    display: flex;
+    justify-content: space-between;
     align-items: center;
+    margin-bottom: 12px;
 }
 
-    body.client-login-page .login-container {
-        margin-top: 0;
+.slot-list li span {
+    font-size: 1rem;
+}
+
+.slot-list li button {
+    padding: 8px 18px;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.slot-list li button:hover {
+    background: var(--accent);
+    color: #000;
+    transform: translateY(-2px);
+}
+
+/* FORM PRENOTAZIONE */
+
+.booking-form-container {
+    background: var(--panel);
+    padding: 24px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-big);
+    animation: fadeIn 0.3s ease-out;
+}
+
+.booking-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--border-light);
+    background: var(--bg-light);
+    color: var(--text);
+    margin-bottom: 20px;
+    outline: none;
+}
+
+.btn-gold {
+    width: 100%;
+    padding: 12px;
+    background: #d4af37;
+    color: #000;
+    border-radius: var(--radius-pill);
+    border: none;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.btn-gold:hover {
+    transform: translateY(-2px);
+    background: #eac55c;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 500px) {
+    .login-card {
+        padding: 22px;
     }
-
-    /* Logo nella pagina login client */
-
-    body.client-login-page .site-logo {
-        display: block;
-        margin: 0 auto 18px auto;
-        width: 90px;
-    }
-
-/* ===========================
-   Responsive
-   =========================== */
-
-@media (max-width: 600px) {
-    .client-content h1 {
-        font-size: 1.6rem;
-    }
-
-    .login-container {
-        margin-top: 40px;
+    .booking-page-main {
+        padding: 0 10px;
     }
 }

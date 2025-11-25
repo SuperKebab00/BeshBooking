@@ -11,40 +11,45 @@
 
 <body class="client-login-page">
 
-  <a href="/BeshBooking/index.html" class="logo-link">
-    <img src="/BeshBooking/assets/img/logo.png" alt="BarberBook Logo" class="site-logo">
-  </a>
+  <!-- HEADER CON LOGO -->
+  <header class="login-header">
+    <a href="/BeshBooking/index.html" class="logo-link">
+      <img src="/BeshBooking/assets/img/logo.png" alt="Besh Barber Logo" class="site-logo-login">
+    </a>
+  </header>
 
-  <div class="login-container">
+  <!-- SEZIONE LOGIN -->
+  <section class="login-main">
     <h1 class="login-title">Area Clienti</h1>
-    <p class="login-subtitle">Accedi con la tua email. Riceverai un link di accesso.</p>
+    <p class="login-subtitle">
+      Accedi con la tua email. Ti invieremo un link di accesso.
+    </p>
 
     <div class="login-card">
       <input 
-        type="email" 
         id="emailInput" 
-        class="login-input" 
-        placeholder="la-tua-email@example.com"
-      >
-
+        type="email" 
+        class="login-input"
+        placeholder="la-tua-email@example.com">
+      
       <button id="sendLoginLinkBtn" class="btn-full-black">
         Invia link di accesso
       </button>
 
       <p class="login-note">
-        Nessuna password necessaria. Accedi in modo sicuro via email.
+        Login senza password. Metodo sicuro e veloce.
       </p>
     </div>
-  </div>
+  </section>
 
-  <!-- Modal globale -->
+  <!-- MODAL -->
   <div class="app-modal-overlay" id="appModal">
     <div class="app-modal">
-      <h2 class="app-modal-title" id="appModalTitle">Avviso</h2>
-      <p class="app-modal-message" id="appModalMessage"></p>
+      <h2 id="appModalTitle"></h2>
+      <p id="appModalMessage"></p>
       <div class="app-modal-actions">
-        <button class="btn-secondary" id="appModalCancel">Annulla</button>
-        <button class="btn-primary" id="appModalOk">OK</button>
+        <button id="appModalCancel" class="btn-secondary">Annulla</button>
+        <button id="appModalOk" class="btn-primary">OK</button>
       </div>
     </div>
   </div>

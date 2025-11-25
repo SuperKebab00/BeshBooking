@@ -1,52 +1,63 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Accesso Barbiere</title>
+  <meta charset="UTF-8">
+  <title>Login Cliente - BeshBarber</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/style.css" />
-  <link rel="stylesheet" href="../assets/css/barber.css" />
+  <link rel="stylesheet" href="/BeshBooking/assets/css/client.css">
+  <link rel="stylesheet" href="/BeshBooking/assets/css/style.css">
 </head>
 
-<body class="barber-login-page">
-  <a href="../index.html" class="logo-link">
-    <img src="../assets/img/logo.png" alt="BarberBook Logo" class="site-logo" />
-  </a>
+<body class="client-login-page">
 
-  <div class="login-container">
-    <h1 class="login-title">Area Barbiere</h1>
-    <p class="login-subtitle">Inserisci la tua email per ricevere il link di accesso.</p>
+  <!-- HEADER CON LOGO -->
+  <header class="login-header">
+    <a href="/BeshBooking/index.html" class="logo-link">
+      <img src="/BeshBooking/assets/img/logo.png" alt="Besh Barber Logo" class="site-logo-login">
+    </a>
+  </header>
+
+  <!-- SEZIONE LOGIN -->
+  <section class="login-main">
+    <h1 class="login-title">Area Clienti</h1>
+    <p class="login-subtitle">
+      Accedi con la tua email. Ti invieremo un link di accesso.
+    </p>
 
     <div class="login-card">
-      <input
-        type="email"
-        id="barberEmailInput"
-        placeholder="barber@example.com"
+      <input 
+        id="emailInput" 
+        type="email" 
         class="login-input"
-      />
-      <button id="barberLoginBtn" class="login-btn">Invia link di accesso</button>
+        placeholder="la-tua-email@example.com">
+      
+      <button id="sendLoginLinkBtn" class="btn-full-black">
+        Invia link di accesso
+      </button>
+
       <p class="login-note">
-        Usa l'email configurata come barbiere.
+        Login senza password. Metodo sicuro e veloce.
       </p>
     </div>
-  </div>
+  </section>
 
-  <!-- Modal globale (se non già presente) -->
+  <!-- MODAL -->
   <div class="app-modal-overlay" id="appModal">
     <div class="app-modal">
-      <h2 class="app-modal-title" id="appModalTitle">Avviso</h2>
-      <p class="app-modal-message" id="appModalMessage"></p>
+      <h2 id="appModalTitle"></h2>
+      <p id="appModalMessage"></p>
       <div class="app-modal-actions">
-        <button type="button" class="btn-secondary" id="appModalCancel">Annulla</button>
-        <button type="button" class="btn-primary" id="appModalOk">OK</button>
+        <button id="appModalCancel" class="btn-secondary">Annulla</button>
+        <button id="appModalOk" class="btn-primary">OK</button>
       </div>
     </div>
   </div>
 
+  <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="../scripts/ui.js"></script>
-  <script src="barber.js"></script>
+  <script src="/BeshBooking/scripts/ui.js"></script>
+  <script src="/BeshBooking/client/client.js"></script>
+
 </body>
 </html>

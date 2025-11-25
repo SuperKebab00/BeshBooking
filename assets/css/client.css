@@ -303,3 +303,82 @@ body.client-booking-page {
         padding: 0 10px;
     }
 }
+/* ============================
+   LOGIN CLIENT — stile barber
+   ============================ */
+
+body.client-login-page {
+    background-color: #000;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 40px;
+}
+
+.client-login-page .logo-link img.site-logo {
+    width: 110px;
+    margin-bottom: 30px;
+    opacity: 1;
+}
+
+.login-container {
+    text-align: center;
+    width: 100%;
+    max-width: 380px;
+}
+
+.login-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+}
+
+.login-subtitle {
+    color: #bdbdbd;
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+}
+
+.login-card {
+    background-color: #111;
+    border: 1px solid #222;
+    padding: 26px 22px;
+    border-radius: 18px;
+    box-shadow: 0 0 40px rgba(255,255,255,0.08);
+}
+
+.login-input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 999px;
+    border: 1px solid #333;
+    background: #000;
+    color: #fff;
+    margin-bottom: 16px;
+    font-size: 1rem;
+}
+
+.login-btn {
+    width: 100%;
+    background-color: #fff;
+    color: #000;
+    border-radius: 999px;
+    padding: 12px 0;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.login-btn:hover {
+    background-color: #ccc;
+}
+
+.login-note {
+    margin-top: 16px;
+    color: #9f9f9f;
+    font-size: 0.85rem;
+}

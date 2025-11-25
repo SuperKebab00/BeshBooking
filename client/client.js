@@ -2,13 +2,14 @@
    client.js - Supabase Email OTP + Bookings DB
    ========================================== */
 
-   const SUPABASE_URL = "https://qkdgjmwdxtosqxmnfmsb.supabase.co";
-const SUPABASE_ANON_KEY ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrZGdqbXdkeHRvc3F4bW5mbXNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5ODU2NTQsImV4cCI6MjA3OTU2MTY1NH0.t7rAZuU3tGeKE7AYLkpFZysl5antY7XTBdPOR1DELYU";
+const SUPABASE_URL = "https://qkdgjmwdxtosqxmnfmsb.supabase.co";
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrZGdqbXdkeHRvc3F4bW5mbXNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5ODU2NTQsImV4cCI6MjA3OTU2MTY1NH0.t7rAZuU3tGeKE7AYLkpFZysl5antY7XTBdPOR1DELYU";
 
 const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* =========================================================
-   LOGIN CLIENTE (email OTP)
+   LOGIN CLIENTE (email OTP) - client/login.html
 ========================================================= */
 (function initClientLogin() {
   const emailInput = document.getElementById("emailInput");
@@ -30,27 +31,29 @@ const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         email,
         options: {
           shouldCreateUser: true,
-           emailRedirectTo: "https://superkebab00.github.io/BeshBooking/client/booking.html"
+          emailRedirectTo:
+            "https://superkebab00.github.io/BeshBooking/client/booking.html",
         },
       });
 
       if (error) {
-        showMessage(error.message, "error");
+        console.error(error);
+        showMessage(error.message || "Errore durante l'invio dell'email.", "error");
         return;
       }
 
       openModal({
         title: "Email inviata",
         message:
-          "Ti abbiamo inviato un link di accesso. Controlla la tua casella.",
+          "Ti abbiamo inviato un link di accesso. Controlla la tua casella email.",
       });
     } catch (err) {
       console.error(err);
-      showMessage("Errore imprevisto.", "error");
+      showMessage("Errore imprevisto durante il login.", "error");
     }
   });
 
-  // Se già loggato, redirect diretto
+  // Se già loggato, vai direttamente alla pagina di prenotazione
   supa.auth.getUser().then(({ data }) => {
     if (data && data.user) {
       window.location.href = "booking.html";
@@ -69,6 +72,7 @@ const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   const confirmBookingBtn = document.getElementById("confirmBookingBtn");
   const logoutBtn = document.getElementById("logoutClientBtn");
 
+  // Se non siamo sulla pagina booking, esci
   if (!datePicker || !slotList) return;
 
   let currentUser = null;
@@ -80,8 +84,12 @@ const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   /* ---------- Autenticazione ---------- */
   async function requireAuth() {
-    const { data } = await supa.auth.getUser();
+    const { data, error } = await supa.auth.getUser();
+    if (error) {
+      console.error(error);
+    }
     if (!data || !data.user) {
+      // Non autenticato -> torna al login
       window.location.href = "login.html";
       return null;
     }
@@ -89,17 +97,55 @@ const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     return currentUser;
   }
 
-  /* ---------- Recupero profilo cliente ---------- */
-  async function loadClientProfile() {
-    const { data } = await supa
-      .from("clients")
-      .select("id, name")
-      .eq("auth_id", currentUser.id)
-      .maybeSingle();
+  /* ---------- Assicura il profilo cliente in tabella clients ---------- */
+  async function ensureClientProfile() {
+    if (!currentUser) return;
 
-    if (data) {
+    try {
+      // 1) Cerchiamo il cliente per auth_id
+      let { data, error } = await supa
+        .from("clients")
+        .select("id, name, email")
+        .eq("auth_id", currentUser.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Errore lettura clients:", error);
+        showMessage("Errore nel recupero del profilo cliente.", "error");
+        return;
+      }
+
+      // 2) Se NON esiste, lo creiamo
+      if (!data) {
+        const { data: inserted, error: insErr } = await supa
+          .from("clients")
+          .insert({
+            auth_id: currentUser.id,
+            email: currentUser.email,
+            name: null,
+          })
+          .select("id, name, email")
+          .single();
+
+        if (insErr) {
+          console.error("Errore creazione client:", insErr);
+          showMessage("Impossibile creare il profilo cliente.", "error");
+          return;
+        }
+
+        data = inserted;
+      }
+
+      // 3) Salviamo l'id del client
       currentClientId = data.id;
-      if (clientNameInput && data.name) clientNameInput.value = data.name;
+
+      // Se abbiamo già un nome e il campo è vuoto, lo pre-compiliamo
+      if (clientNameInput && data.name) {
+        clientNameInput.value = data.name;
+      }
+    } catch (err) {
+      console.error(err);
+      showMessage("Errore imprevisto sul profilo cliente.", "error");
     }
   }
 
@@ -112,6 +158,7 @@ const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       .order("time", { ascending: true });
 
     if (error) {
+      console.error(error);
       showMessage("Errore caricamento disponibilità.", "error");
       return [];
     }
@@ -171,30 +218,52 @@ const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     confirmBookingBtn.addEventListener("click", async () => {
       const name = (clientNameInput.value || "").trim();
 
-      if (!name) return showMessage("Inserisci il tuo nome.", "error");
-      if (!selectedDate || !selectedSlot || !selectedSlotId)
-        return showMessage("Seleziona una fascia oraria.", "error");
-      if (!currentClientId)
-        return showMessage("Profilo cliente non trovato.", "error");
+      if (!name) {
+        showMessage("Inserisci il tuo nome.", "error");
+        return;
+      }
+      if (!selectedDate || !selectedSlot || !selectedSlotId) {
+        showMessage("Seleziona una fascia oraria.", "error");
+        return;
+      }
+      if (!currentClientId) {
+        showMessage("Profilo cliente non trovato.", "error");
+        return;
+      }
 
       try {
+        // Aggiorno il nome del cliente (così lo salviamo)
+        await supa
+          .from("clients")
+          .update({ name })
+          .eq("id", currentClientId);
+
         // Inserisci prenotazione
         const { error: bookErr } = await supa.from("bookings").insert({
           client_id: currentClientId,
           date: selectedDate,
           time: selectedSlot,
           notes: null,
+          // barber_id: null // opzionale, se vuoi associarlo più avanti
         });
 
         if (bookErr) {
-          showMessage("Errore prenotazione.", "error");
+          console.error("Errore prenotazione:", bookErr);
+          showMessage("Errore durante la prenotazione.", "error");
           return;
         }
 
         // Rimuovi disponibilità
-        await supa.from("availability").delete().eq("id", selectedSlotId);
+        const { error: delErr } = await supa
+          .from("availability")
+          .delete()
+          .eq("id", selectedSlotId);
 
-        openModal({
+        if (delErr) {
+          console.error("Errore rimozione fascia:", delErr);
+        }
+
+        await openModal({
           title: "Prenotazione confermata",
           message: `Hai prenotato alle ${selectedSlot}!`,
         });
@@ -204,17 +273,18 @@ const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         await renderSlots(selectedDate);
       } catch (err) {
         console.error(err);
-        showMessage("Errore imprevisto.", "error");
+        showMessage("Errore imprevisto durante la prenotazione.", "error");
       }
     });
   }
 
-  /* ---------- INIT ---------- */
+  /* ---------- INIT BOOKING PAGE ---------- */
   (async function init() {
     const user = await requireAuth();
     if (!user) return;
 
-    await loadClientProfile();
+    // Assicura che esista il record nella tabella clients
+    await ensureClientProfile();
 
     const today = new Date();
     const yyyy = today.getFullYear();

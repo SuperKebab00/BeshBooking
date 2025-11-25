@@ -46,7 +46,7 @@ function todayKey() {
         email,
         options: {
           shouldCreateUser: true,
-          // emailRedirectTo: "https://superkebab00.github.io/BeshBooking/barber/dashboard.html"
+           emailRedirectTo: "https://superkebab00.github.io/BeshBooking/barber/dashboard.html"
         },
       });
 

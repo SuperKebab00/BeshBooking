@@ -32,7 +32,8 @@ const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         options: {
           shouldCreateUser: true,
           emailRedirectTo:
-            "https://superkebab00.github.io/BeshBooking/client/booking.html",
+            emailRedirectTo: "https://superkebab00.github.io/BeshBooking/client/create-password.html",
+
         },
       });
 

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrazione Barbiere</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/barber.css">
+</head>
+
+<body class="barber-login-page">
+  <a href="../index.html" class="logo-link">
+    <img src="../assets/img/logo.png" class="site-logo" />
+  </a>
+
+  <div class="login-container">
+    <h1 class="login-title">Registrazione Barbiere</h1>
+    <p class="login-subtitle">Riceverai una mail per impostare la password.</p>
+
+    <div class="login-card">
+      <input type="email" id="regEmail" class="login-input" placeholder="barbiere@example.com">
+
+      <button id="regOtpBtn" class="login-btn">Invia link di registrazione</button>
+
+      <a href="login-password.html" class="login-note">Hai già un account? Accedi</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../scripts/ui.js"></script>
+
+  <script>
+    const supa = window.supabase.createClient(
+      "https://qkdgjmwdxtosqxmnfmsb.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5..."
+    );
+
+    document.getElementById("regOtpBtn").addEventListener("click", async () => {
+      const email = document.getElementById("regEmail").value.trim();
+
+      const { error } = await supa.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo:
+            "https://superkebab00.github.io/BeshBooking/barber/create-password.html"
+        }
+      });
+
+      if(error){
+        showMessage(error.message, "error");
+        return;
+      }
+
+      openModal({
+        title: "Controlla la email",
+        message: "Abbiamo inviato un link di conferma."
+      });
+    });
+  </script>
+
+</body>
+</html>

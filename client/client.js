@@ -1,5 +1,5 @@
 /* ==========================================
-   client.js - Supabase Email OTP + Bookings DB
+   client.js - Prenotazioni cliente (booking)
    ========================================== */
 
 const SUPABASE_URL = "https://qkdgjmwdxtosqxmnfmsb.supabase.co";
@@ -7,60 +7,6 @@ const SUPABASE_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrZGdqbXdkeHRvc3F4bW5mbXNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5ODU2NTQsImV4cCI6MjA3OTU2MTY1NH0.t7rAZuU3tGeKE7AYLkpFZysl5antY7XTBdPOR1DELYU";
 
 const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-/* =========================================================
-   LOGIN CLIENTE (email OTP) - client/login.html
-========================================================= */
-(function initClientLogin() {
-  const emailInput = document.getElementById("emailInput");
-  const sendBtn = document.getElementById("sendLoginLinkBtn");
-
-  // Se non siamo sulla pagina login, esci
-  if (!emailInput || !sendBtn) return;
-
-  sendBtn.addEventListener("click", async () => {
-    const email = (emailInput.value || "").trim();
-
-    if (!email) {
-      showMessage("Inserisci una email valida.", "error");
-      return;
-    }
-
-    try {
-      const { error } = await supa.auth.signInWithOtp({
-        email,
-        options: {
-          shouldCreateUser: true,
-          emailRedirectTo:
-            emailRedirectTo: "https://superkebab00.github.io/BeshBooking/client/create-password.html",
-
-        },
-      });
-
-      if (error) {
-        console.error(error);
-        showMessage(error.message || "Errore durante l'invio dell'email.", "error");
-        return;
-      }
-
-      openModal({
-        title: "Email inviata",
-        message:
-          "Ti abbiamo inviato un link di accesso. Controlla la tua casella email.",
-      });
-    } catch (err) {
-      console.error(err);
-      showMessage("Errore imprevisto durante il login.", "error");
-    }
-  });
-
-  // Se già loggato, vai direttamente alla pagina di prenotazione
-  supa.auth.getUser().then(({ data }) => {
-    if (data && data.user) {
-      window.location.href = "booking.html";
-    }
-  });
-})();
 
 /* =========================================================
    PRENOTAZIONI CLIENTE (booking.html)
@@ -90,8 +36,8 @@ const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       console.error(error);
     }
     if (!data || !data.user) {
-      // Non autenticato -> torna al login
-      window.location.href = "login.html";
+      // Non autenticato -> torna al login con password
+      window.location.href = "login-password.html";
       return null;
     }
     currentUser = data.user;
@@ -210,7 +156,7 @@ const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       if (!ok) return;
 
       await supa.auth.signOut();
-      window.location.href = "login.html";
+      window.location.href = "login-password.html";
     });
   }
 
@@ -245,7 +191,6 @@ const supa = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
           date: selectedDate,
           time: selectedSlot,
           notes: null,
-          // barber_id: null // opzionale, se vuoi associarlo più avanti
         });
 
         if (bookErr) {

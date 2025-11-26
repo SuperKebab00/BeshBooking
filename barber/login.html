@@ -2,51 +2,13 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Accesso Barbiere</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/css/style.css" />
-  <link rel="stylesheet" href="../assets/css/barber.css" />
+  <title>Redirect login</title>
+  <meta http-equiv="refresh" content="0; url=login-password.html" />
 </head>
-
-<body class="barber-login-page">
-  <a href="../index.html" class="logo-link">
-    <img src="../assets/img/logo.png" alt="BarberBook Logo" class="site-logo" />
-  </a>
-
-  <div class="login-container">
-    <h1 class="login-title">Area Barbiere</h1>
-    <p class="login-subtitle">Inserisci la tua email per ricevere il link di accesso.</p>
-
-    <div class="login-card">
-      <input
-        type="email"
-        id="barberEmailInput"
-        placeholder="barber@example.com"
-        class="login-input"
-      />
-      <button id="barberLoginBtn" class="login-btn">Invia link di accesso</button>
-      <p class="login-note">
-        Usa l'email configurata come barbiere.
-      </p>
-    </div>
-  </div>
-
-  <!-- Modal globale (se non già presente) -->
-  <div class="app-modal-overlay" id="appModal">
-    <div class="app-modal">
-      <h2 class="app-modal-title" id="appModalTitle">Avviso</h2>
-      <p class="app-modal-message" id="appModalMessage"></p>
-      <div class="app-modal-actions">
-        <button type="button" class="btn-secondary" id="appModalCancel">Annulla</button>
-        <button type="button" class="btn-primary" id="appModalOk">OK</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="../scripts/ui.js"></script>
-  <script src="barber.js"></script>
+<body>
+  <script>
+    window.location.href = "login-password.html";
+  </script>
+  <p>Reindirizzamento in corso...</p>
 </body>
 </html>

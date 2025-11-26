@@ -1,92 +1,20 @@
 /* ==========================================
-   barber.js - Supabase Auth + Availability/Bookings
+   barber.js - Dashboard Barbiere (NO LOGIN)
    ========================================== */
 
 const SUPABASE_URL = "https://qkdgjmwdxtosqxmnfmsb.supabase.co";
-const SUPABASE_ANON_KEY ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrZGdqbXdkeHRvc3F4bW5mbXNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5ODU2NTQsImV4cCI6MjA3OTU2MTY1NH0.t7rAZuU3tGeKE7AYLkpFZysl5antY7XTBdPOR1DELYU";
-const supaBarber = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrZGdqbXdkeHRvc3F4bW5mbXNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5ODU2NTQsImV4cCI6MjA3OTU2MTY1NH0.t7rAZuU3tGeKE7AYLkpFZysl5antY7XTBdPOR1DELYU";
+
+const supaBarber = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* Helpers */
-function _msgOk(t) {
-  showMessage(t, "success");
-}
-function _msgErr(t) {
-  showMessage(t, "error");
-}
+function _msgOk(t) { showMessage(t, "success"); }
+function _msgErr(t) { showMessage(t, "error"); }
 
 function todayKey() {
   const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
-    2,
-    "0"
-  )}-${String(d.getDate()).padStart(2, "0")}`;
-}
-
-/* =========================================================
-   LOGIN BARBER
-========================================================= */
-(function initBarberLoginPage() {
-  const emailInput = document.getElementById("barberEmailInput");
-  const btn = document.getElementById("barberLoginBtn");
-
-  if (!emailInput || !btn) return;
-
-  btn.addEventListener("click", async () => {
-    const email = (emailInput.value || "").trim();
-    if (!email) {
-      _msgErr("Inserisci una email valida.");
-      return;
-    }
-
-    try {
-      const { error } = await supaBarber.auth.signInWithOtp({
-        email,
-        options: {
-          shouldCreateUser: true,
-           emailRedirectTo: emailRedirectTo: "https://superkebab00.github.io/BeshBooking/client/create-password.html",
-
-        },
-      });
-
-      if (error) {
-        console.error(error);
-        _msgErr(error.message || "Errore durante l'invio dell'email.");
-        return;
-      }
-
-      openModal({
-        title: "Controlla la tua email",
-        message:
-          "Ti abbiamo inviato un link di accesso. Cliccalo per continuare.",
-        showCancel: false,
-      });
-    } catch (e) {
-      console.error(e);
-      _msgErr("Errore imprevisto durante il login.");
-    }
-  });
-
-  supaBarber.auth.getUser().then(async ({ data }) => {
-    if (data && data.user) {
-      const isBarber = await checkIsBarber(data.user.id);
-      if (isBarber) window.location.href = "dashboard.html";
-    }
-  });
-})();
-
-/* Verifica ruolo barbiere */
-async function checkIsBarber(authUserId) {
-  const { data, error } = await supaBarber
-    .from("clients")
-    .select("is_barber")
-    .eq("auth_id", authUserId)
-    .maybeSingle();
-
-  if (error) return false;
-  return data && data.is_barber;
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 }
 
 /* =========================================================
@@ -112,18 +40,26 @@ async function checkIsBarber(authUserId) {
 
   let currentUser = null;
 
+  /* ---------- AUTENTICAZIONE barbiere ---------- */
   async function requireBarberAuth() {
     const { data } = await supaBarber.auth.getUser();
+
     if (!data || !data.user) {
-      window.location.href = "login.html";
+      window.location.href = "login-password.html";
       return null;
     }
 
-    const isBarber = await checkIsBarber(data.user.id);
-    if (!isBarber) {
+    // Controllo ruolo is_barber
+    const { data: client, error } = await supaBarber
+      .from("clients")
+      .select("is_barber")
+      .eq("auth_id", data.user.id)
+      .maybeSingle();
+
+    if (error || !client || !client.is_barber) {
       await openModal({
         title: "Accesso non autorizzato",
-        message: "Questo account non è configurato come barbiere.",
+        message: "Questo account non è un barbiere registrato."
       });
       window.location.href = "../index.html";
       return null;
@@ -133,7 +69,7 @@ async function checkIsBarber(authUserId) {
     return currentUser;
   }
 
-  /* Logout */
+  /* ---------- LOGOUT ---------- */
   if (headerLogout) {
     headerLogout.addEventListener("click", async () => {
       const ok = await openModal({
@@ -141,27 +77,27 @@ async function checkIsBarber(authUserId) {
         message: "Vuoi davvero uscire?",
         showCancel: true,
       });
+
       if (!ok) return;
+
       await supaBarber.auth.signOut();
-      window.location.href = "login.html";
+      window.location.href = "login-password.html";
     });
   }
 
-  /* Tabs */
+  /* ---------- TABS UI ---------- */
   tabButtons.forEach((btn) => {
     btn.addEventListener("click", () => {
       tabButtons.forEach((b) => b.classList.remove("active"));
       sections.forEach((s) => s.classList.remove("active"));
       btn.classList.add("active");
-      document
-        .getElementById(`tab-${btn.dataset.tab}`)
-        .classList.add("active");
+      document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
     });
   });
 
-  /* ---------------------------------------------------------
-     AVAILABILITY - DB
-  --------------------------------------------------------- */
+  /* =========================================================
+     GESTIONE DISPONIBILITÀ
+  ========================================================= */
   async function loadAvailability(dateKey) {
     const { data, error } = await supaBarber
       .from("availability")
@@ -180,7 +116,7 @@ async function checkIsBarber(authUserId) {
 
     if (!slots.length) {
       const li = document.createElement("li");
-      li.textContent = "Nessuna fascia disponibile per questa data.";
+      li.textContent = "Nessuna fascia disponibile.";
       availList.appendChild(li);
       return;
     }
@@ -192,6 +128,7 @@ async function checkIsBarber(authUserId) {
 
       const removeBtn = document.createElement("button");
       removeBtn.textContent = "Rimuovi";
+
       removeBtn.addEventListener("click", async () => {
         const ok = await openModal({
           title: "Rimuovere fascia?",
@@ -225,13 +162,10 @@ async function checkIsBarber(authUserId) {
       const t = (availTime.value || "").trim();
 
       if (!d || !t) return _msgErr("Inserisci data e orario.");
-
-      if (!/^\d{2}:\d{2}$/.test(t))
-        return _msgErr("Formato orario non valido (HH:MM).");
+      if (!/^\d{2}:\d{2}$/.test(t)) return _msgErr("Formato non valido, usa HH:MM.");
 
       const existing = await loadAvailability(d);
-      if (existing.some((s) => s.time === t))
-        return _msgErr("Questa fascia esiste già.");
+      if (existing.some((s) => s.time === t)) return _msgErr("Fascia già esistente.");
 
       await supaBarber.from("availability").insert({
         date: d,
@@ -241,18 +175,19 @@ async function checkIsBarber(authUserId) {
 
       availTime.value = "";
       await renderAvailList(d);
-      _msgOk("Aggiunta!");
+      _msgOk("Fascia aggiunta.");
     });
   }
 
-  /* ---------------------------------------------------------
-     BOOKINGS - DB (+ pagamento)
-  --------------------------------------------------------- */
+  /* =========================================================
+     GESTIONE PRENOTAZIONI
+  ========================================================= */
   async function loadBookings(dateKey) {
     const { data } = await supaBarber
       .from("bookings")
       .select("id, time, date, has_paid, amount_paid, clients(name, email)")
       .eq("date", dateKey)
+      .eq("barber_id", currentUser.id)   // importante se vuoi multi-barbiere
       .order("time", { ascending: true });
 
     return data || [];
@@ -272,13 +207,13 @@ async function checkIsBarber(authUserId) {
 
     list.forEach((bk) => {
       const li = document.createElement("li");
-
       const left = document.createElement("div");
+
       const name = bk.clients?.name || "Cliente";
       const email = bk.clients?.email || "-";
       left.innerHTML = `Ore <span>${bk.time}</span> — ${name} (${email})`;
 
-      /* --- BOX PAGAMENTO --- */
+      /* BOX PAGAMENTO */
       const paymentBox = document.createElement("div");
       paymentBox.className = "payment-box";
 
@@ -293,6 +228,7 @@ async function checkIsBarber(authUserId) {
 
       const savePaymentBtn = document.createElement("button");
       savePaymentBtn.textContent = "Salva pagamento";
+
       savePaymentBtn.addEventListener("click", async () => {
         await supaBarber
           .from("bookings")
@@ -309,19 +245,21 @@ async function checkIsBarber(authUserId) {
       paymentBox.appendChild(amountInput);
       paymentBox.appendChild(savePaymentBtn);
 
-      /* --- CANCELLAZIONE --- */
+      /* CANCELLA PRENOTAZIONE */
       const cancelBtn = document.createElement("button");
       cancelBtn.textContent = "Annulla";
 
       cancelBtn.addEventListener("click", async () => {
         const ok = await openModal({
-          title: "Annullare?",
+          title: "Annullare prenotazione?",
           message: `Annullare la prenotazione delle ${bk.time}?`,
           showCancel: true,
         });
         if (!ok) return;
 
         await supaBarber.from("bookings").delete().eq("id", bk.id);
+
+        // riaggiungo la disponibilità
         await supaBarber.from("availability").insert({
           date: dateKey,
           time: bk.time,
@@ -344,35 +282,20 @@ async function checkIsBarber(authUserId) {
   function initBookings() {
     bookingDate.value = todayKey();
     renderBookingList(bookingDate.value);
+
     bookingDate.addEventListener("change", () => {
       renderBookingList(bookingDate.value);
     });
   }
 
-  /* ---------------------------------------------------------
-     SETTINGS
-  --------------------------------------------------------- */
-  function initSettings() {
-    if (changePwdBtn) {
-      changePwdBtn.addEventListener("click", () => {
-        openModal({
-          title: "Impostazioni",
-          message:
-            "La gestione password avviene via email OTP su Supabase. In futuro possiamo aggiungere nome, telefono, foto profilo.",
-        });
-      });
-    }
-  }
-
-  /* ---------------------------------------------------------
-     INIT
-  --------------------------------------------------------- */
+  /* =========================================================
+     INIT DASHBOARD
+  ========================================================= */
   (async function init() {
     const user = await requireBarberAuth();
     if (!user) return;
 
     initAvailability();
     initBookings();
-    initSettings();
   })();
 })();

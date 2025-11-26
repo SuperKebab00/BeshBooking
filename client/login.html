@@ -1,62 +1,14 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>Login Cliente - BeshBarber</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Fonts e CSS globali -->
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="../assets/css/style.css">
-  <link rel="stylesheet" href="../assets/css/client.css">
+  <meta charset="UTF-8" />
+  <title>Redirect login</title>
+  <meta http-equiv="refresh" content="0; url=login-password.html" />
 </head>
-
-<body class="client-login-page">
-
-  <!-- LOGO CENTRALE COME BARBER LOGIN -->
-  <a href="../index.html" class="logo-link">
-    <img src="../assets/img/logo.png" alt="BeshBarber Logo" class="site-logo">
-  </a>
-
-  <div class="login-container">
-    <h1 class="login-title">Area Clienti</h1>
-    <p class="login-subtitle">Accedi con la tua email. Ti invieremo un link di accesso.</p>
-
-    <div class="login-card active">
-      <input 
-        type="email" 
-        id="emailInput" 
-        class="login-input" 
-        placeholder="la-tua-email@example.com"
-      >
-
-      <button id="sendLoginLinkBtn" class="login-btn">
-        Invia link di accesso
-      </button>
-
-      <p class="login-note">
-        Nessuna password necessaria. Accesso sicuro via email.
-      </p>
-    </div>
-  </div>
-
-  <!-- MODAL -->
-  <div class="app-modal-overlay" id="appModal">
-    <div class="app-modal">
-      <h2 class="app-modal-title" id="appModalTitle">Avviso</h2>
-      <p class="app-modal-message" id="appModalMessage"></p>
-      <div class="app-modal-actions">
-        <button class="btn-secondary" id="appModalCancel">Annulla</button>
-        <button class="btn-primary" id="appModalOk">OK</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- SCRIPTS -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="../scripts/ui.js"></script>
-  <script src="client.js"></script>
-
+<body>
+  <script>
+    window.location.href = "login-password.html";
+  </script>
+  <p>Reindirizzamento in corso...</p>
 </body>
 </html>

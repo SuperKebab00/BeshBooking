@@ -2,11 +2,11 @@
    barber.js - Dashboard Barbiere (NO LOGIN)
    ========================================== */
 
-const SUPABASE_URL = "https://qkdgjmwdxtosqxmnfmsb.supabase.co";
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrZGdqbXdkeHRvc3F4bW5mbXNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5ODU2NTQsImV4cCI6MjA3OTU2MTY1NH0.t7rAZuU3tGeKE7AYLkpFZysl5antY7XTBdPOR1DELYU";
+const supa = window.supa;
 
-const supaBarber = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+if (!supa) {
+  console.error("Supabase client non inizializzato. Controlla l'ordine degli script in booking.html");
+}
 
 /* Helpers */
 function _msgOk(t) { showMessage(t, "success"); }
@@ -42,7 +42,7 @@ function todayKey() {
 
   /* ---------- AUTENTICAZIONE barbiere ---------- */
   async function requireBarberAuth() {
-    const { data } = await supaBarber.auth.getUser();
+    const { data } = await supa.auth.getUser();
 
     if (!data || !data.user) {
       window.location.href = "login-password.html";
@@ -50,7 +50,7 @@ function todayKey() {
     }
 
     // Controllo ruolo is_barber
-    const { data: client, error } = await supaBarber
+    const { data: client, error } = await supa
       .from("clients")
       .select("is_barber")
       .eq("auth_id", data.user.id)
@@ -80,7 +80,7 @@ function todayKey() {
 
       if (!ok) return;
 
-      await supaBarber.auth.signOut();
+      await supa.auth.signOut();
       window.location.href = "login-password.html";
     });
   }
@@ -99,7 +99,7 @@ function todayKey() {
      GESTIONE DISPONIBILITÀ
   ========================================================= */
   async function loadAvailability(dateKey) {
-    const { data, error } = await supaBarber
+    const { data, error } = await supa
       .from("availability")
       .select("id, time")
       .eq("date", dateKey)
@@ -137,7 +137,7 @@ function todayKey() {
         });
         if (!ok) return;
 
-        await supaBarber.from("availability").delete().eq("id", slot.id);
+        await supa.from("availability").delete().eq("id", slot.id);
 
         await renderAvailList(dateKey);
         _msgOk("Fascia rimossa.");
@@ -167,7 +167,7 @@ function todayKey() {
       const existing = await loadAvailability(d);
       if (existing.some((s) => s.time === t)) return _msgErr("Fascia già esistente.");
 
-      await supaBarber.from("availability").insert({
+      await supa.from("availability").insert({
         date: d,
         time: t,
         barber_id: currentUser.id,
@@ -183,7 +183,7 @@ function todayKey() {
      GESTIONE PRENOTAZIONI
   ========================================================= */
   async function loadBookings(dateKey) {
-    const { data } = await supaBarber
+    const { data } = await supa
       .from("bookings")
       .select("id, time, date, has_paid, amount_paid, clients(name, email)")
       .eq("date", dateKey)
@@ -230,7 +230,7 @@ function todayKey() {
       savePaymentBtn.textContent = "Salva pagamento";
 
       savePaymentBtn.addEventListener("click", async () => {
-        await supaBarber
+        await supa
           .from("bookings")
           .update({
             has_paid: paidCheckbox.checked,
@@ -257,10 +257,10 @@ function todayKey() {
         });
         if (!ok) return;
 
-        await supaBarber.from("bookings").delete().eq("id", bk.id);
+        await supa.from("bookings").delete().eq("id", bk.id);
 
         // riaggiungo la disponibilità
-        await supaBarber.from("availability").insert({
+        await supa.from("availability").insert({
           date: dateKey,
           time: bk.time,
           barber_id: currentUser.id,

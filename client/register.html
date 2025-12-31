@@ -27,14 +27,16 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../scripts/supabase-client.js"></script>
   <script src="../scripts/ui.js"></script>
 
   <script>
-    const supa = window.supabase.createClient(
-      "https://qkdgjmwdxtosqxmnfmsb.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5..."
-    );
+   const supa = window.supa;
+
+if (!supa) {
+  console.error("Supabase client non inizializzato. Controlla l'ordine degli script nella sezione barber");
+}
 
     document.getElementById("regOtpBtn").addEventListener("click", async () => {
       const email = document.getElementById("regEmail").value.trim();

@@ -1,5 +1,5 @@
 /* ==========================================
-   ui.js – Funzioni UI minimal Black/White
+   ui.js ï¿½ Funzioni UI minimal Black/White
    ========================================== */
 
 /**
@@ -22,7 +22,7 @@ function showMessage(message, type = "info") {
 }
 
 /* ==========================================
-   MODAL GLOBALE – openModal()
+   MODAL GLOBALE ï¿½ openModal()
    ========================================== */
 
 const appModal = document.getElementById("appModal");

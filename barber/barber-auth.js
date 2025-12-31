@@ -1,8 +1,8 @@
-const SUPABASE_URL = "https://qkdgjmwdxtosqxmnfmsb.supabase.co";
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFrZGdqbXdkeHRvc3F4bW5mbXNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM5ODU2NTQsImV4cCI6MjA3OTU2MTY1NH0.t7rAZuU3tGeKE7AYLkpFZysl5antY7XTBdPOR1DELYU";
+const supa = window.supa;
 
-const supaBarber = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+if (!supa) {
+  console.error("Supabase client non inizializzato. Controlla l'ordine degli script nella sezione barber");
+}
 
 /* LOGIN BARBIERE (password) */
 (function initBarberPasswordLogin(){
@@ -21,7 +21,7 @@ const supaBarber = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
       return;
     }
 
-    const { data, error } = await supaBarber.auth.signInWithPassword({
+    const { data, error } = await supa.auth.signInWithPassword({
       email,
       password
     });
@@ -32,7 +32,7 @@ const supaBarber = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
     }
 
     // controllo ruolo barbiere
-    const { data: role } = await supaBarber
+    const { data: role } = await supa
       .from("clients")
       .select("is_barber")
       .eq("auth_id", data.user.id)

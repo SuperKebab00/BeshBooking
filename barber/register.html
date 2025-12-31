@@ -37,14 +37,10 @@
     document.getElementById("regOtpBtn").addEventListener("click", async () => {
       const email = document.getElementById("regEmail").value.trim();
 
-      const { error } = await supa.auth.signInWithOtp({
-        email,
-        options: {
-          shouldCreateUser: true,
-          emailRedirectTo:
-            "https://superkebab00.github.io/BeshBooking/barber/create-password.html"
-        }
-      });
+      const { error } =     await supa.auth.resetPasswordForEmail(email, {
+  redirectTo: "https://superkebab00.github.io/BeshBooking/barber/create-password.html"
+})
+
 
       if(error){
         showMessage(error.message, "error");
